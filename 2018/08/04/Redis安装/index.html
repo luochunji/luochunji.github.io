@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="动态代理,redis,Cygwin,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在学习Redis之前，首先要安装redis的运行环境，了解它的基础命令和基本知识">
+<meta name="keywords" content="动态代理,redis,Cygwin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis安装">
+<meta property="og:url" content="http://yoursite.com/2018/08/04/Redis安装/index.html">
+<meta property="og:site_name" content="阿吉的技术分享">
+<meta property="og:description" content="在学习Redis之前，首先要安装redis的运行环境，了解它的基础命令和基本知识">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823092805486-1663505105.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823093524389-802997790.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823101626454-32715309.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823101744668-1259974944.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823104944423-1271230096.png">
+<meta property="og:updated_time" content="2019-01-08T03:05:46.771Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis安装">
+<meta name="twitter:description" content="在学习Redis之前，首先要安装redis的运行环境，了解它的基础命令和基本知识">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/04/Redis安装/572667-20180823092805486-1663505105.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/04/Redis安装/">
+
+
+
+
+
+  <title>Redis安装 | 阿吉的技术分享</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉的技术分享</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/04/Redis安装/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="我是阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉的技术分享">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis安装</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T10:45:43+08:00">
+                2018-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  在学习Redis之前，首先要安装redis的运行环境，了解它的基础命令和基本知识
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Redis安装"><a href="#Redis安装" class="headerlink" title="Redis安装"></a>Redis安装</h1><p>在学习Redis之前，首先要安装redis的运行环境，了解它的基础命令和基本知识。</p>
+<h2 id="下载redis"><a href="#下载redis" class="headerlink" title="下载redis"></a>下载redis</h2><p> 　进入redis官网的下载页面<a href="https://redis.io/download" target="_blank" rel="noopener">https://redis.io/download</a></p>
+<p><img src="572667-20180823092805486-1663505105.png" alt="img"></p>
+<p>　　从这个页面我们可以得到的一些基本信息是，redis分为稳定版和非稳定版，其中偶数版本号为稳定版，奇数版本号为非稳定版。截至目前（2018年8月）最新的稳定版为4.0.11，Beta版为5.0-rc4，如果要下载之前的版本，页面往下拉</p>
+<p><img src="572667-20180823093524389-802997790.png" alt="img"></p>
+<p>有oldVersion可以选择，直接提供下载的是3.2.12版本，如果要找其他版本，你可以通过这个连接<a href="http://download.redis.io/releases/" target="_blank" rel="noopener">http://download.redis.io/releases/</a>下载，我安装的是3.0版本（为什么选3.0？主要原因是我使用redis比较晚，当时是跟着《Redis入门指南》学习，李子骅大牛用的就是3.0来讲解，另一个原因我认为3.0应该是redis的一个里程碑，加入集群支持后，redis完成了分布式的实现，新的embedded string编码格式，LRU算法的优化和其他性能的提升，如果之前接触过Redis，这些功能应该让你感到兴奋，从此memcache有的功能，redis几乎都有了，技术选型中使用redis将是更好的选择）</p>
+<h2 id="安装redis"><a href="#安装redis" class="headerlink" title="安装redis"></a>安装redis</h2><h3 id="在linux下安装"><a href="#在linux下安装" class="headerlink" title="在linux下安装"></a>在linux下安装</h3><p> 我是在centos6的虚拟机上安装，输入以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-3.0.0.tar.gz</span><br><span class="line">tar xzf redis-3.0.0.tar.gz</span><br><span class="line">cd redis-3.0.0</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>逐行执行，成功后再执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>将启动命令等复制到bin目录中，方便以后敲命令，linux下安装编译比较简单，没有其他依赖。</p>
+<h3 id="在windows下安装"><a href="#在windows下安装" class="headerlink" title="在windows下安装"></a>在windows下安装</h3><p>redis官网上没有windows的安装包，微软发了个补丁让redis可以在windows下运行，但是考虑今后的生产环境应该都会使用linux，所以在windows下也建议以虚拟机或Cygwin的方式运行redis（Cygwin是一个类似虚拟机的linux模拟环境，它将linux下的软件重编译后在linux下运行，而且他的软件包还提供了上千个工具，windows下学习linux相关应用的神器！！！）</p>
+<p>首先，在Cygwin官网上下载<a href="http://www.cygwin.com/setup-x86_64.exe" target="_blank" rel="noopener">http://www.cygwin.com/setup-x86_64.exe</a>，根据提示选择下载方式、安装路径、最后出现软件包安装界面</p>
+<p><img src="572667-20180823101626454-32715309.png" alt="img"></p>
+<p><img src="572667-20180823101744668-1259974944.png" alt="img"></p>
+<p>将gcc和make的组件勾选，我这里显示”keep”是因为已经安装过了，如果没安装过，显示的是版本号，Skip表示不安装。</p>
+<p>然后下载redis的源码，命令与linux下安装时一样，但是要注意，在make之前还要修改src目录下的redis.h文件，在头部加入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>ifdef CYGWIN</span><br><span class="line"><span class="meta">#</span>ifndef SA ONSTACK</span><br><span class="line"><span class="meta">#</span>define SA ONSTACK 0x08000000</span><br><span class="line"><span class="meta">#</span>endif</span><br><span class="line"><span class="meta">#</span>endif</span><br></pre></td></tr></table></figure>
+<p>cygwin的文件路径就是安装路径，例如D:\cygwin64\，修改文件可以直接找到目录下的文件，用文本编辑器打开修改，也可以在linux下用vim修改。</p>
+<p>修改之后在redis根目录执行make，如果报错，请参考这篇文章<a href="https://www.cnblogs.com/skey_chen/p/5765019.html" target="_blank" rel="noopener">《redis3.0.6安装（linux和windows）》</a></p>
+<h3 id="启停Redis"><a href="#启停Redis" class="headerlink" title="启停Redis"></a>启停Redis</h3><p> 首先来了解几个文件，在执行make install之后，redis的几个常用可执行文件会复制到Cygwin的bin目录下，因此可以通过直接输入命令来运行，省去路径</p>
+<table>
+<thead>
+<tr>
+<th>文件/命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>redis-server</td>
+<td>redis服务端启动</td>
+</tr>
+<tr>
+<td>redis-cli</td>
+<td>redis客户端启动</td>
+</tr>
+<tr>
+<td>redis-benchmark</td>
+<td>redis性能测试</td>
+</tr>
+<tr>
+<td>redis-check-aof</td>
+<td>aof文件修复工具</td>
+</tr>
+<tr>
+<td>redis-check-dump</td>
+<td>rdb文件检查工具</td>
+</tr>
+<tr>
+<td>redis-sentinel</td>
+<td>sentinel服务</td>
+</tr>
+</tbody>
+</table>
+<h4 id="启动redis"><a href="#启动redis" class="headerlink" title="启动redis"></a>启动redis</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> redis-server</span><br></pre></td></tr></table></figure>
+<p><img src="572667-20180823104944423-1271230096.png" alt="img"></p>
+<p>出现以上提示，表示启动成功</p>
+<p>redis的默认端口为 6379，如果要修改端口，可以用以下参数启动（xxxx用实际端口号替换）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> redis-server --port xxxx</span><br></pre></td></tr></table></figure>
+<p>也可以通过</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> redis-server -h 或 $ redis-server --help</span><br></pre></td></tr></table></figure>
+<p>查看其他启动参数，具体的启动参数如下</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>省略</td>
+<td>按照默认配置启动</td>
+</tr>
+<tr>
+<td>/etc/xxx.conf</td>
+<td>按照指定的配置文件启动</td>
+</tr>
+<tr>
+<td>-v 或 –version</td>
+<td>查看redis版本号</td>
+</tr>
+<tr>
+<td>-slaveof ip port</td>
+<td>将当前服务器转为指定服务器的slave</td>
+</tr>
+<tr>
+<td>–loglevel xxx</td>
+<td>配置日志级别，xxx有4个可选参数，分别是debug\verbose\notice\warning</td>
+</tr>
+</tbody>
+</table>
+<h4 id="停止Redis"><a href="#停止Redis" class="headerlink" title="停止Redis"></a>停止Redis</h4><p>redis支持优雅停机，在客户端发送shutdown命令，会先断开客户端连接，然后根据配置执行持久化策略，完成后退出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> redis-cli shutdown</span><br></pre></td></tr></table></figure>
+<p>redis可以处理系统的kill命令，效果与shutdown一样，但是kill -9 命令将直接终止redis进程，无法优雅停机</p>
+<p> 启动命令行客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> redis-cli</span><br></pre></td></tr></table></figure>
+<p> 和启动服务端一样，启动客户端也可以使用启动参数</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-h</td>
+<td>hostname，服务端的ip</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>port，服务端的端口</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>socket 包含了hostname和port</td>
+</tr>
+<tr>
+<td>-a</td>
+<td>password 服务端密码</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>n，n表示重复执行的次数，如-r 100</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>配合-r命令，命令执行的间隔时间</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>选择数据库，默认是0</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>从磁盘/缓冲区读取</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>设置换行符，默认是”\n”</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>启用集群</td>
+</tr>
+<tr>
+<td>–raw</td>
+<td>返回格式化后的输出信息</td>
+</tr>
+<tr>
+<td>–no-row</td>
+<td>返回原始的输出信息</td>
+</tr>
+<tr>
+<td>–csv</td>
+<td>以csv格式输出</td>
+</tr>
+<tr>
+<td>–stat</td>
+<td>查看redis服务的实时状态，基本信息包含keys数量\memory大小\client数量\blocked统计请求数\连接数等</td>
+</tr>
+<tr>
+<td>–latency</td>
+<td>服务延迟持续采样，一般用于监视性能，输出平均延时时间</td>
+</tr>
+<tr>
+<td>–latency-history</td>
+<td>服务延迟持续采样，间隔时间输出，大概每15秒左右输出一组结果</td>
+</tr>
+<tr>
+<td>–latency-dist</td>
+<td>服务延迟采样，以带色块的频谱（这个翻译可能不太好）输出，默认每1秒输出一行，可以用-i参数修改</td>
+</tr>
+<tr>
+<td>–lru-test</td>
+<td>针对某个key，测试lru算法</td>
+</tr>
+<tr>
+<td>–slave</td>
+<td>slave服务</td>
+</tr>
+<tr>
+<td>–rdb</td>
+<td>转储rdb到本地文件</td>
+</tr>
+<tr>
+<td>–pipe</td>
+<td>将redis协议格式的数据发送的服务端执行</td>
+</tr>
+<tr>
+<td>–pipe-timeout</td>
+<td>功能同上，带超时参数，默认30秒，如果服务端没有返回结果，自动终止</td>
+</tr>
+<tr>
+<td>–bigkeys</td>
+<td>查找占用内存较大的key，列出每种数据类型key的最大size和平均size</td>
+</tr>
+<tr>
+<td>–scan</td>
+<td>扫描redis的key</td>
+</tr>
+<tr>
+<td>–pattern</td>
+<td>以sacn的方式，扫描指定的pattern</td>
+</tr>
+<tr>
+<td>–intrinsic-latency</td>
+<td>测试系统延迟，需在server上执行</td>
+</tr>
+<tr>
+<td>–eval</td>
+<td>执行lua脚本</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/动态代理/" rel="tag"># 动态代理</a>
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+            <a href="/tags/Cygwin/" rel="tag"># Cygwin</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/30/常用设计模式-代理模式/" rel="prev" title="常用设计模式 - 代理模式">
+                常用设计模式 - 代理模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">我是阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis安装"><span class="nav-number">1.</span> <span class="nav-text">Redis安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载redis"><span class="nav-number">1.1.</span> <span class="nav-text">下载redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装redis"><span class="nav-number">1.2.</span> <span class="nav-text">安装redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在linux下安装"><span class="nav-number">1.2.1.</span> <span class="nav-text">在linux下安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在windows下安装"><span class="nav-number">1.2.2.</span> <span class="nav-text">在windows下安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启停Redis"><span class="nav-number">1.2.3.</span> <span class="nav-text">启停Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#启动redis"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">启动redis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#停止Redis"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">停止Redis</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">我是阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
