@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问。">
+<meta name="description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问，单例的三个特点：  jvm中始终只有一个实例 由类自己创建 为其他类提供唯一实例  单例有多种写法，以下列举最常用的七种写法。">
 <meta name="keywords" content="设计模式,单例">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常用设计模式-单例的几种写法">
 <meta property="og:url" content="http://yoursite.com/2019/01/03/常用设计模式-单例/index.html">
 <meta property="og:site_name" content="阿吉的技术分享">
-<meta property="og:description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问。">
+<meta property="og:description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问，单例的三个特点：  jvm中始终只有一个实例 由类自己创建 为其他类提供唯一实例  单例有多种写法，以下列举最常用的七种写法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-09T07:57:39.357Z">
+<meta property="og:updated_time" content="2019-01-10T14:37:49.745Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常用设计模式-单例的几种写法">
-<meta name="twitter:description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问。">
+<meta name="twitter:description" content="单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问，单例的三个特点：  jvm中始终只有一个实例 由类自己创建 为其他类提供唯一实例  单例有多种写法，以下列举最常用的七种写法。">
 
 
 
@@ -379,10 +379,6 @@
           
 
           
-              <div class="post-description">
-                  单例是Java中最简单也是最常用的设计模式之一，它属于创建型模式，在JVM的启动到停止期间，单例只允许类存在一个实例，这个类的实例是由类自己创建并提供给其他类访问。
-              </div>
-          
 
         </div>
       </header>
@@ -404,6 +400,7 @@
 <li>为其他类提供唯一实例</li>
 </ol>
 <p>单例有多种写法，以下列举最常用的七种写法。</p>
+<a id="more"></a>
 <h2 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h2><p>懒汉式单例声明一个静态的instance = null的对象，因此类在初始化时，类并不会马上实例化，外部对象要调用该类的实例，只能通过getInstance方法，在第一次调用时进行实例化，起到延迟加载的作用。getInstance方法加了同步锁保证线程安全，但在并发时会造成性能瓶颈</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LazySingleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 类加载时并没有初始化（延迟加载）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> LazySingleton instance = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LazySingleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构造函数私有化</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 使用内置同步锁，线程安全，但在并发下会造成性能问题</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> LazySingleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == instance) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> LazySingleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h2><p>饿汉式单例与懒汉式的区别在于：</p>
@@ -552,7 +549,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -574,7 +571,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -764,7 +761,7 @@
   
 
     
-      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+      <script id="dsq-count-scr" src="https://myblog_aji.disqus.com/count.js" async></script>
     
 
     
@@ -775,7 +772,7 @@
           this.page.title = '常用设计模式-单例的几种写法';
         };
         var d = document, s = d.createElement('script');
-        s.src = 'https://.disqus.com/embed.js';
+        s.src = 'https://myblog_aji.disqus.com/embed.js';
         s.setAttribute('data-timestamp', '' + +new Date());
         (d.head || d.body).appendChild(s);
       </script>
@@ -795,10 +792,6 @@
   
 
 
-
-
-
-  
 
 
 
