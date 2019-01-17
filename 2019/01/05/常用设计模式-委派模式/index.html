@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="设计模式,委派模式,">
 
 
 
@@ -79,17 +79,18 @@
 
 
 
-<meta name="description" content="keep moving forward">
-<meta name="keywords" content="java 编程 设计 架构 分享 思考 学习">
-<meta property="og:type" content="website">
-<meta property="og:title" content="阿吉-Share">
-<meta property="og:url" content="http://yoursite.com/tags/redis/index.html">
+<meta name="description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
+<meta name="keywords" content="设计模式,委派模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用设计模式-委派模式">
+<meta property="og:url" content="http://yoursite.com/2019/01/05/常用设计模式-委派模式/index.html">
 <meta property="og:site_name" content="阿吉-Share">
-<meta property="og:description" content="keep moving forward">
+<meta property="og:description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-17T01:07:00.503Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="阿吉-Share">
-<meta name="twitter:description" content="keep moving forward">
+<meta name="twitter:title" content="常用设计模式-委派模式">
+<meta name="twitter:description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
 
 
 
@@ -119,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/redis/">
+  <link rel="canonical" href="http://yoursite.com/2019/01/05/常用设计模式-委派模式/">
 
 
 
 
 
-  <title>标签: redis | 阿吉-Share</title>
+  <title>常用设计模式-委派模式 | 阿吉-Share</title>
   
 
 
@@ -144,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -238,78 +239,205 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>redis<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/05/常用设计模式-委派模式/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/08/06/Redis-数据类型/" itemprop="url">
-              
-                <span itemprop="name">Redis-数据类型</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">常用设计模式-委派模式</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-08-06T09:23:10+08:00" content="2018-08-06">
-          08-06
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-05T18:32:08+08:00">
+                2019-01-05
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/05/常用设计模式-委派模式/" class="leancloud_visitors" data-flag-title="常用设计模式-委派模式">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
+      
 
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/04/Redis安装/" itemprop="url">
-              
-                <span itemprop="name">Redis安装</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-08-04T10:45:43+08:00" content="2018-08-04">
-          08-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
+        <p>委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。</p>
+<a id="more"></a>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>项目外包：A公司从甲方承接了一个工程项目，然后外包给B公司，三个角色：</p>
+<ol>
+<li>甲方（调用者）</li>
+<li>A公司（委派对象）</li>
+<li>B公司（被委派对象）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompanyB</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">      System.out.println(<span class="string">"CompanyB doSomething"</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompanyA</span> </span>&#123;</span><br><span class="line">	<span class="comment">//实例化CompanyB</span></span><br><span class="line">	<span class="keyword">private</span> CompanyB delegate = <span class="keyword">new</span> CompanyB();</span><br><span class="line">    <span class="comment">//真正实施这个工程的是B公司</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">		delegate.doSomething();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	CompanyA companyA = <span class="keyword">new</span> CompanyA();</span><br><span class="line">	companyA.doSomething();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CompanyB doSomething</span><br></pre></td></tr></table></figure>
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><ol>
+<li>A类（委派类）和B类（被委派类）之间没有继承关系，A类中有一个属性为类B；</li>
+<li>A类B类有相同的方法和属性</li>
+</ol>
+<h1 id="与代理模式的区别"><a href="#与代理模式的区别" class="headerlink" title="与代理模式的区别"></a>与代理模式的区别</h1><p>代理模式满足两个角色：代理对象和被代理对象，与委派模式很像，但他们区别在于：</p>
+<ol>
+<li>代理模式的代理类和被代理类可能有继承关系（cglib代理），委派模式类与类之间不需要继承；</li>
+<li>代理类在调用代理类前/后做前置/后置处理，委派模式只是做单纯的调用；</li>
+<li>委派模式可以层层委派，比如上例中B公司可以把工程再外包给C公司、C公司再外包给D公司……</li>
+</ol>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/委派模式/" rel="tag"># 委派模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/04/常用设计模式-原型模式/" rel="next" title="常用设计模式-原型模式">
+                <i class="fa fa-chevron-left"></i> 常用设计模式-原型模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -317,6 +445,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -337,8 +469,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -400,6 +541,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">1.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与代理模式的区别"><span class="nav-number">3.</span> <span class="nav-text">与代理模式的区别</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -540,6 +697,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
