@@ -88,7 +88,7 @@
 <meta property="og:description" content="代理模式是JAVA常用的设计模式之一，代理模式不直调用代理对象，而是通过对象的代理类来处理，好比是中介、黄牛、经纪人，代理模式又分为静态代理和动态代理。 代理对象：面向调用者，在调用者和被代理对象之间作为隔离层加以控制，可以增强被代理对象的方法。 被代理对象：真正的执行者，需要对代理对象暴露">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/12/30/常用设计模式-代理模式/简单事务模型.png">
-<meta property="og:updated_time" content="2019-01-10T14:17:41.204Z">
+<meta property="og:updated_time" content="2019-01-17T08:35:53.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常用设计模式 - 代理模式">
 <meta name="twitter:description" content="代理模式是JAVA常用的设计模式之一，代理模式不直调用代理对象，而是通过对象的代理类来处理，好比是中介、黄牛、经纪人，代理模式又分为静态代理和动态代理。 代理对象：面向调用者，在调用者和被代理对象之间作为隔离层加以控制，可以增强被代理对象的方法。 被代理对象：真正的执行者，需要对代理对象暴露">
@@ -370,7 +370,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticProxyTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student xiaoMing = <span class="keyword">new</span> XiaoMing();</span><br><span class="line">        HuangNiu huangNiu = <span class="keyword">new</span> HuangNiu(xiaoMing);</span><br><span class="line">        huangNiu.buy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">我是黄牛，你要什么票？</span><br><span class="line">------------</span><br><span class="line">我是学生小明，我要一张去上海的票</span><br><span class="line">------------</span><br></pre></td></tr></table></figure>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>相对于静态代理，动态代理的代理类是在运行时通过反射生成，动态代理在实现上又有两种，分别是jdk动态代理和cglib动态代理。</p>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>相对于静态代理，动态代理的代理类是在运行时生成，动态代理在实现上又有两种，分别是jdk动态代理和cglib动态代理。</p>
 <h2 id="JDK动态代理"><a href="#JDK动态代理" class="headerlink" title="JDK动态代理"></a>JDK动态代理</h2><p>JDK动态代理要求被代理对象<strong>必须实现接口</strong>，其原理是代理对象实现该接口的方法，同时调用被代理对象的方法。将生成后的代理对象，强制转换为接口被调用者调用。还是以小明和黄牛为例：</p>
 <p>小明，实现学生接口的buy方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XiaoMing</span> <span class="keyword">implements</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"我是学生，我要买票去上海的硬座"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -380,7 +380,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 实例化代理类时调用getInstance方法传入了小明的实例，生成代理类==&gt;黄牛，强制转换为Student</span></span><br><span class="line"><span class="comment">         * 接口，因此实际上是由黄牛去执行买票操作；</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Student huangniu = (Student) <span class="keyword">new</span> HuangNiu().getInstance(<span class="keyword">new</span> XiaoMing());</span><br><span class="line">        huangniu.buy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">我是黄牛，你要什么票?</span><br><span class="line">--------------</span><br><span class="line">我是学生，我要买票去上海的硬座</span><br><span class="line">--------------</span><br></pre></td></tr></table></figure>
-<p>代理类并没有直接实现Student接口，而是通过反射生成字节码文件的方式，动态生成接口的实现类。</p>
+<p>HuangNiu类没有直接实现Person接口，而是通过反射生成字节码文件的方式，动态生成真正的代理类。</p>
 <h2 id="Cglib动态代理"><a href="#Cglib动态代理" class="headerlink" title="Cglib动态代理"></a>Cglib动态代理</h2><p>与JDK动态代理不同的是，cglib代理不强制被代理类实现接口，它是通过生成代理类的子类，并重写代理类方法来实现的，所以代理类不能用final修饰，还是以小明和黄牛为例：</p>
 <p>小明：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XiaoMing</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"我是学生，我要买票去上海的硬座"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -527,7 +527,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -549,7 +549,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
