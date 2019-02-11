@@ -13,8 +13,8 @@
         <tag>json</tag>
         <tag>hessian</tag>
         <tag>kryo</tag>
-        <tag>protobuf</tag>
         <tag>messagepack</tag>
+        <tag>protobuf</tag>
       </tags>
   </entry>
   <entry>
@@ -153,6 +153,17 @@
         <tag>事务</tag>
         <tag>事务隔离</tag>
         <tag>事务传播</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[初识zookeeper]]></title>
+    <url>%2F2018%2F03%2F15%2F%E5%88%9D%E8%AF%86zookeeper%2F</url>
+    <content type="text"><![CDATA[zookeeper简介是什么zookeeper是一个开源的分布式应用协调服务，由雅虎公司研发，基于google chubby实现，提供的功能包括：配置维护、域名服务、分布式同步等，它是一个分布式数据一致性的解决方案。 能做什么数据发布/订阅 负载均衡 命名服务 分布式独享锁 master选举 分布式队列 有哪些特点 顺序一致性 来自客户端的更新请求，最终都会严格按照请求顺序在zookeeper中保持一致。简单来说，就是客户端将NodeA的值更新为a，紧接着将值更新为b，那么其他节点同步的数据，肯定是先看到a，再看到b。 原子性 所有事务请求的最终结果在集群中所有节点上是一致的，要么都成功，要么都失败。 持久性 更新一旦成功并且对客户端做了相应，那么这个更新就会持久存在且不被撤销。 实时性 在某一段特定的时间内，客户端能立即从服务端读取到最新的数据，并且在此时间段内，节点中任何数据的改变，都将被客户端发现。 zookeeper如何安装环境准备系统环境：centos7 软件环境：JDK6+ 单机模式 下载zookeeper，用的是3.4.10版本 1wget https://archive.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz 解压 1tar -zxvf zookeeper-3.4.10.tar.gz 复制并重命名配置文件 进入zk的conf目录，看到一个zoo_sample.cfg文件，先复制一份并命名为zoo.cfg，因为这个sample文件只是配置的范例，zookeeper启动时默认的配置文件为zoo.cfg。 1cp zoo_sample.cfg zoo.cfg 以下是配置文件的有关参数 12345678910111213141516# 心跳间隔，用来监测客户端与服务端的通信，默认是2000毫秒tickTime=2000# 集群环境下，初始化连接时leader与follower最长心跳tickTime限制，默认是10 * 2000也就是20秒initLimit=10# 集群环境下，leader与follower请求、应答的最大时间限制限制，默认是5 * 2000也就是10秒syncLimit=5# 快照/数据保存目录，默认是/tmp/zookeeper，建议改掉它，因为tmp目录在服务重启后会被删除dataDir=/tmp/zookeeper# 客户端连接的默认端口clientPort=2181# 限制连接到当前zk服务的客户端数（以IP区分），默认是关闭的#maxClientCnxns=60# 保留多少份dataDir的快照数据，之前的全都会删除#autopurge.snapRetainCount=3# 清理保存在dataDir的交互日志的时间间隔，小时为单位，设置为0表示不删除，默认不删除#autopurge.purgeInterval=1 启动服务 启动服务前，可以通过help查看zk有哪些命令 1sh zkServer.sh help --help替换成其他非zk的命令字符也是可以查看的 start：启动 start-foreground：以前台进程的方式启动，会占用当前命令窗口，建议在调试的时候使用，方便查看输出的信息 stop：停止 restart：重启 status：查看当前zk服务的模式 upgrade：升级 print-cmd：打印指令 start命令启动后，出现 …STARTED表示启动成功 用status命令查看服务状态 Mode：standalone表示zookeeper正以单机模式运行 客户端链接 输入sh zkCli.sh -server serverIP : port，连接到zk服务，看到welcome…表示连接成功 1sh zkCli.sh -server localhost:2181 集群模式集群环境需先准备三个服务器，ip分别为 192.168.96.129 192.168.96.130 192.168.96.131 分别在三台服务器上安装zookeeper，然后按照以下步骤进行配置 修改配置文件 修改zk_home（zookeeper安装的根目录）/conf/zoo.cfg，在末尾加上以下配置 server.id=serverIP:port:port id表示该机器在这个集群中的唯一标识，取值范围1-255； 2888端口是用来集群中各节点相互通讯； 3888端口则是用来选举leader时的通讯； 将三台服务器都按以下配置 server.1=192.168.96.129:2888:3888server.2=192.168.96.130:2888:3888server.3=192.168.96.131:2888:3888 创建myid文件 在zoo.cfg配置的dataDir目录下，创建myid文件，内容就是第一项中配置的id，例如192.168.96.129服务器的myid文件内容为1，192.168.96.130的myid内容为2，192.168.96.131的myid内容为3 启动zookeeper 启动每个服务器上的zookeeper，启动后分别查看状态 正常启动且集群成功，将出现以下提示 Mode：leader表示该服务器是集群中的leader角色 如果出现以下提示， 可以通过查看bin目录下的zookeeper.out日志查找问题，很有可能是因为防火墙没有关闭导致节点无法互相通信，先关闭防火墙再重试 12systemctl stop firewalld --关闭防火墙systemctl disable firewalld --禁止防火墙开机启动 zookeeper的集群有三种角色：Leader/Follower/Observer Leader：接收所有Follower提交的请求，负责与Follower进行数据同步； Follower：接收客户端的请求并参与选举，同时与Leader进行数据同步； Observer：接收客户端的请求，同时与Leader进行数据同步，不参与选举，zookeeper性能扩展的特殊节点。 在集群中如何配置Observer？ 新增一台服务器192.168.96.132，在zoo.cfg增加以下配置 server.4=192.168.96.132:2888:3888:observer 启动后查看status状态 Mode：observer，表示当前zk服务的角色为observer]]></content>
+      <categories>
+        <category>zookeeper</category>
+      </categories>
+      <tags>
+        <tag>zookeeper</tag>
       </tags>
   </entry>
 </search>
