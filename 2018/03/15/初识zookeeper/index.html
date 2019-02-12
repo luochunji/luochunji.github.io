@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/03/15/初识zookeeper/zk-cmd-start-leader.png">
 <meta property="og:image" content="http://yoursite.com/2018/03/15/初识zookeeper/zk-cmd-start-error.png">
 <meta property="og:image" content="http://yoursite.com/2018/03/15/初识zookeeper/zk-cmd-status-observer.png">
-<meta property="og:updated_time" content="2019-02-11T03:18:21.924Z">
+<meta property="og:updated_time" content="2019-02-12T00:15:54.916Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识zookeeper">
 <meta name="twitter:image" content="http://yoursite.com/2018/03/15/初识zookeeper/zookeeper_logo.png">
@@ -394,7 +394,7 @@
 <p>进入zk的conf目录，看到一个zoo_sample.cfg文件，先复制一份并命名为zoo.cfg，因为这个sample文件只是配置的范例，zookeeper启动时默认的配置文件为zoo.cfg。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure>
 <p>以下是配置文件的有关参数</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 心跳间隔，用来监测客户端与服务端的通信，默认是2000毫秒</span></span><br><span class="line">tickTime=<span class="number">2000</span></span><br><span class="line"><span class="comment"># 集群环境下，初始化连接时leader与follower最长心跳tickTime限制，默认是10 * 2000也就是20秒</span></span><br><span class="line">initLimit=<span class="number">10</span></span><br><span class="line"><span class="comment"># 集群环境下，leader与follower请求、应答的最大时间限制限制，默认是5 * 2000也就是10秒</span></span><br><span class="line">syncLimit=<span class="number">5</span></span><br><span class="line"><span class="comment"># 快照/数据保存目录，默认是/tmp/zookeeper，建议改掉它，因为tmp目录在服务重启后会被删除</span></span><br><span class="line">dataDir=/tmp/zookeeper</span><br><span class="line"><span class="comment"># 客户端连接的默认端口</span></span><br><span class="line">clientPort=<span class="number">2181</span></span><br><span class="line"><span class="comment"># 限制连接到当前zk服务的客户端数（以IP区分），默认是关闭的</span></span><br><span class="line"><span class="comment">#maxClientCnxns=60</span></span><br><span class="line"><span class="comment"># 保留多少份dataDir的快照数据，之前的全都会删除</span></span><br><span class="line"><span class="comment">#autopurge.snapRetainCount=3</span></span><br><span class="line"><span class="comment"># 清理保存在dataDir的交互日志的时间间隔，小时为单位，设置为0表示不删除，默认不删除</span></span><br><span class="line"><span class="comment">#autopurge.purgeInterval=1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 心跳间隔，用来监测客户端与服务端的通信，默认是2000毫秒</span></span><br><span class="line">tickTime=<span class="number">2000</span></span><br><span class="line"><span class="comment"># 集群环境下，初始化连接时leader与follower数据同步的最长心跳tickTime限制，默认是10 * 2000也就是20秒</span></span><br><span class="line">initLimit=<span class="number">10</span></span><br><span class="line"><span class="comment"># 集群环境下，leader与follower请求、应答的最大时间限制限制，默认是5 * 2000也就是10秒</span></span><br><span class="line">syncLimit=<span class="number">5</span></span><br><span class="line"><span class="comment"># 快照/数据保存目录，默认是/tmp/zookeeper，建议改掉它，因为tmp目录在服务重启后会被删除</span></span><br><span class="line">dataDir=/tmp/zookeeper</span><br><span class="line"><span class="comment"># 客户端连接的默认端口</span></span><br><span class="line">clientPort=<span class="number">2181</span></span><br><span class="line"><span class="comment"># 限制连接到当前zk服务的客户端数（以IP区分），默认是关闭的</span></span><br><span class="line"><span class="comment">#maxClientCnxns=60</span></span><br><span class="line"><span class="comment"># 保留多少份dataDir的快照数据，之前的全都会删除</span></span><br><span class="line"><span class="comment">#autopurge.snapRetainCount=3</span></span><br><span class="line"><span class="comment"># 清理保存在dataDir的交互日志的时间间隔，小时为单位，设置为0表示不删除，默认不删除</span></span><br><span class="line"><span class="comment">#autopurge.purgeInterval=1</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>启动服务</p>
 <p>启动服务前，可以通过help查看zk有哪些命令</p>
@@ -574,7 +574,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -596,7 +596,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
