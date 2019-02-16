@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="设计模式,委派模式,">
+  <meta name="keywords" content="zookeeper,ACL,">
 
 
 
@@ -79,18 +79,21 @@
 
 
 
-<meta name="description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
-<meta name="keywords" content="设计模式,委派模式">
+<meta name="description" content="本篇 主要分析zookeeper（以下简称ZK）的数据模型，包含命名空间、层次结构和节点类型等基本属性。ZK的命名空间与分布式的文件系统高度相似，唯一的区别是ZK的命名空间允许每个节点保存数据，就好比一个既是目录也是数据文件文件系统。">
+<meta name="keywords" content="zookeeper,ACL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="常用设计模式-委派模式">
-<meta property="og:url" content="http://yoursite.com/2019/01/05/常用设计模式-委派模式/index.html">
+<meta property="og:title" content="zookeeper数据模型和特性">
+<meta property="og:url" content="http://yoursite.com/2018/03/17/zookeeper数据模型/index.html">
 <meta property="og:site_name" content="阿吉-Share">
-<meta property="og:description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
+<meta property="og:description" content="本篇 主要分析zookeeper（以下简称ZK）的数据模型，包含命名空间、层次结构和节点类型等基本属性。ZK的命名空间与分布式的文件系统高度相似，唯一的区别是ZK的命名空间允许每个节点保存数据，就好比一个既是目录也是数据文件文件系统。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-17T01:07:00.503Z">
+<meta property="og:image" content="http://yoursite.com/2018/03/17/zookeeper数据模型/Zookeeper树形结构.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/17/zookeeper数据模型/state_dia.jpg">
+<meta property="og:updated_time" content="2019-02-16T09:08:15.952Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="常用设计模式-委派模式">
-<meta name="twitter:description" content="委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。">
+<meta name="twitter:title" content="zookeeper数据模型和特性">
+<meta name="twitter:description" content="本篇 主要分析zookeeper（以下简称ZK）的数据模型，包含命名空间、层次结构和节点类型等基本属性。ZK的命名空间与分布式的文件系统高度相似，唯一的区别是ZK的命名空间允许每个节点保存数据，就好比一个既是目录也是数据文件文件系统。">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/17/zookeeper数据模型/Zookeeper树形结构.png">
 
 
 
@@ -120,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/01/05/常用设计模式-委派模式/">
+  <link rel="canonical" href="http://yoursite.com/2018/03/17/zookeeper数据模型/">
 
 
 
 
 
-  <title>常用设计模式-委派模式 | 阿吉-Share</title>
+  <title>zookeeper数据模型和特性 | 阿吉-Share</title>
   
 
 
@@ -253,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/05/常用设计模式-委派模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/17/zookeeper数据模型/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阿吉">
@@ -270,7 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">常用设计模式-委派模式</h1>
+          <h1 class="post-title" itemprop="name headline">zookeeper数据模型和特性</h1>
         
 
         <div class="post-meta">
@@ -282,8 +285,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-05T18:32:08+08:00">
-                2019-01-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T20:11:35+08:00">
+                2018-03-17
               </time>
             
 
@@ -305,8 +308,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/设计模式/" itemprop="url" rel="index">
-                    <span itemprop="name">设计模式</span>
+                  <a href="/categories/zookeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">zookeeper</span>
                   </a>
                 </span>
 
@@ -322,7 +325,7 @@
 
           
           
-             <span id="/2019/01/05/常用设计模式-委派模式/" class="leancloud_visitors" data-flag-title="常用设计模式-委派模式">
+             <span id="/2018/03/17/zookeeper数据模型/" class="leancloud_visitors" data-flag-title="zookeeper数据模型和特性">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -353,30 +356,77 @@
       
 
       
-        <p>委派（Delegate）模式，有两个类参与处理同一个请求，接受请求的类将请求委托给另一个类（被委派对象）来处理，具有保护被委派对象，隐藏实现细节的功能。委派模式至少必须两个类参与，以聚合取代继承。</p>
+        <p>本篇 主要分析zookeeper（以下简称ZK）的数据模型，包含命名空间、层次结构和节点类型等基本属性。ZK的命名空间与分布式的文件系统高度相似，唯一的区别是ZK的命名空间允许每个节点保存数据，就好比一个既是目录也是数据文件文件系统。</p>
 <a id="more"></a>
-<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>项目外包：A公司从甲方承接了一个工程项目，然后外包给B公司，三个角色：</p>
+<h1 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h1><p>ZK的命名空间规范是以斜杠分隔，所有的路径都是绝对路径（没有相对路径），任何unicode字符都可以作为节点名称，但根据官方文档的描述，必须遵守以下约束：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">·The null character (\u0000) cannot be part of a path name. (This causes problems with the C binding.)</span><br><span class="line"></span><br><span class="line">#null不允许作为节点名称</span><br><span class="line"></span><br><span class="line">·The following characters can&apos;t be used because they don&apos;t display well, or render in confusing ways: \u0001 - \u0019 and \u007F - \u009F.</span><br><span class="line"></span><br><span class="line">#\u0001 - \u0019和\u007F - \u009F范围内的字符禁止作为节点名称，这些字符对应的就是空方块、空三角等无法正确显示的字符</span><br><span class="line"></span><br><span class="line">·The following characters are not allowed: \ud800 -uF8FFF, \uFFF0 - uFFFF.</span><br><span class="line"></span><br><span class="line">#\ud800 -uF8FFF和\uFFF0 - uFFFF范围内的字符也禁止</span><br><span class="line"></span><br><span class="line">·The &quot;.&quot; character can be used as part of another name, but &quot;.&quot; and &quot;..&quot; cannot alone be used to indicate a node along a path, because ZooKeeper doesn&apos;t use relative paths. The following would be invalid: &quot;/a/b/./c&quot; or &quot;/a/b/../c&quot;.</span><br><span class="line"></span><br><span class="line">#节点名称中不允许只包含&quot;.&quot;和&quot;..&quot;字符，因为ZK不存在相对路径一说，因此这种写法也是不允许的</span><br><span class="line"></span><br><span class="line">·The token &quot;zookeeper&quot; is reserved.</span><br><span class="line"></span><br><span class="line">#&quot;zookeeper&quot;作为保留字，不允许作为节点名称</span><br></pre></td></tr></table></figure>
+<p>ZK的视图的树形结构</p>
+<p><img src="Zookeeper树形结构.png" alt=""></p>
+<h1 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h1><h2 id="ZNode"><a href="#ZNode" class="headerlink" title="ZNode"></a>ZNode</h2><p>ZK树中的每个节点都称之为ZNode，每个ZNode都可以写入数据，并且维护着一组stat信息（包含版本信息、权限信息，节点属性等），ZNode有以下几个类型：</p>
 <ol>
-<li>甲方（调用者）</li>
-<li>A公司（委派对象）</li>
-<li>B公司（被委派对象）</li>
+<li>持久节点（PERSISTENT）：一旦创建，不会因为客户端session断开而删除；</li>
+<li>临时节点（EPHEMERAL）：客户端session断开后，自动删除，临时节点下不能创建子节点；</li>
+<li>持久有序节点（PERSISTENT_SEQUENTIAL）：有序的持久节点；</li>
+<li>临时有序节点（EPHEMERAL_SEQUENTIAL）：有序的临时节点；</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompanyB</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">      System.out.println(<span class="string">"CompanyB doSomething"</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompanyA</span> </span>&#123;</span><br><span class="line">	<span class="comment">//实例化CompanyB</span></span><br><span class="line">	<span class="keyword">private</span> CompanyB delegate = <span class="keyword">new</span> CompanyB();</span><br><span class="line">    <span class="comment">//真正实施这个工程的是B公司</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">		delegate.doSomething();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>测试类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	CompanyA companyA = <span class="keyword">new</span> CompanyA();</span><br><span class="line">	companyA.doSomething();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CompanyB doSomething</span><br></pre></td></tr></table></figure>
-<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><ol>
-<li>A类（委派类）和B类（被委派类）之间没有继承关系，A类中有一个属性为类B；</li>
-<li>A类B类有相同的方法和属性</li>
-</ol>
-<h1 id="与代理模式的区别"><a href="#与代理模式的区别" class="headerlink" title="与代理模式的区别"></a>与代理模式的区别</h1><p>代理模式满足两个角色：代理对象和被代理对象，与委派模式很像，但他们区别在于：</p>
+<p>有序节点的组成：名称末尾会加上一个顺序号，格式为%010d，表示长度10，左补0，例如node0000000001、node0000000002，利用这个特点可以实现分布式队列。</p>
+<p>ZNode有以下特点：</p>
 <ol>
-<li>代理模式的代理类和被代理类可能有继承关系（cglib代理），委派模式类与类之间不需要继承；</li>
-<li>代理类在调用代理类前/后做前置/后置处理，委派模式只是做单纯的调用；</li>
-<li>委派模式可以层层委派，比如上例中B公司可以把工程再外包给C公司、C公司再外包给D公司……</li>
+<li>watch监听，客户端可以对ZNode进行监视，ZNode的事务操作（创建、修改、删除、新增子节点等）都会触发watch事件，向客户端发送通知，然后清除当前watch监听。</li>
+<li>访问权限，存储在ZNode的数据都是以原子的方式进行读写，读取/写入的访问权限都由一个Access Control List（ACL）来控制是否有操作权限。</li>
+<li>数据存储大小，ZK的设计初衷是用来作为协调服务，它虽然可以存储数据，但这并不是它的主要目的，因此他允许保存的数据大小上限是1M，这些数据一般为配置信息、状态信息等相对较小，不会占用太大的存储空间。如果非要存储大量的数据，建议把数据保存在大容量存储系统中（bulk storage system），例如NFS、HDFS，而ZK只保存这些数据的存储路径。</li>
 </ol>
+<h2 id="Stat"><a href="#Stat" class="headerlink" title="Stat"></a>Stat</h2><p>上文提到了ZNode维护了一组stat信息，这些信息由哪些组成？又有什么涵义呢？先来看看它的结构。</p>
+<p><strong>czxid</strong>：ZNode创建时的zxid（create）</p>
+<p><strong>mzxid</strong>：ZNode上次修改时的zxid（modify）</p>
+<p><strong>pzxid</strong>：ZNode子节点变更（新增、修改、删除）的zxid（parent）</p>
+<p><strong>ctime</strong>：节点创建的时间戳（Unix时间戳）</p>
+<p><strong>mtime</strong>：节点上次修改时间戳（Unix时间戳）</p>
+<p><strong>version</strong>：当前节点的版本，如果修改了当前节点保存的数据，每次更改都会自增</p>
+<p><strong>cversion</strong>：子节点的版本，子节点的事务提交都会引起该值自增</p>
+<p><strong>aversion</strong>：节点的ACL版本，修改节点的ACL权限，会引起该值自增</p>
+<p><strong>ephemeralOwner</strong>：如果节点是一个临时节点，该值就是对应的sessionId，持久节点该值为0</p>
+<p><strong>dataLength</strong>：数据字节长度</p>
+<p><strong>numChildren</strong>：子节点个数</p>
+<p>这里有几个属性，记录着ZNode每次变化的时间。</p>
+<ol>
+<li>zxid（Zookeeper Transaction Id），它是一个unix时间戳，stat中保存了三个zxid，分别是czxid（创建）、mzxid（修改）、pzxid（子节点变更），在ZK中任何一次事务提交，都会将提交时的时间戳保存在对应的属性上。</li>
+<li>version，stat中保存了三个version，分别是version（当前节点版本，数据修改会导致自增）、cversion（子节点版本，子节点事务提交会导致自增）、aversion（当前节点ACL版本，ACL权限变更会导致自增）</li>
+</ol>
+<h1 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h1><p>先看ZK官网的这张图，会话的开始和结束</p>
+<p><img src="state_dia.jpg" alt=""></p>
+<p>客户端从连接成功到连接断开，中间保持的状态就是一个会话（Session），客户端一旦连上ZK server，server就会创建一个session和唯一的64位sessionId用来和客户端保持通信。从上图来看，客户端连接到服务端有以下几个状态：</p>
+<p><strong>CONNECTING</strong>，连接中</p>
+<p><strong>CONNECTED</strong>，已连接</p>
+<p><strong>AUTH_FAILED</strong>，认证失败</p>
+<p><strong>SESSION_EXPIRED</strong>，会话过期</p>
+<p><strong>DISCONNECTED</strong>，会话断开</p>
+<p><strong>CLOSED</strong>，会话关闭</p>
+<p>客户端连接服务端时，会带一个超时时间的参数，表示多少时间（毫秒）内连上服务端（这个时间取决于zoo.cfg的tickTime配置，至少是2倍tickTime，最大不超过20倍tickTime）</p>
+<h1 id="监听"><a href="#监听" class="headerlink" title="监听"></a>监听</h1><p>在ZK的节点上，任何读请求都可以设置一个watch监听，它有以下三个特点：</p>
+<ol>
+<li><strong>一次性</strong>，节点的数据变更会出发监听事件并发送通知到客户端，当再次修改这个节点的数据时，不会再次触发监听事件，除非再次设置监听。</li>
+<li><strong>发送客户端通知</strong>，监听事件是异步发送的，ZK可以保证发送到客户端的通知是有序的，例如客户端对某个ZNode设置监听事件，在这个请求到达服务端前，其他客户端修改了这个ZNode的数据，那么发送请求的客户端是无法感知的。即使设置了监听事件，其他客户端对数据的修改也无法立即通知到这个客户端，因此ZK只能保持数据的最终一致。</li>
+<li><strong>watch数据监听</strong>，ZNode允许客户端对当前节点和子节点建立监听</li>
+</ol>
+<p>可以通过三个指令监听ZNode的状态，getData()和exists()用来设置当前节点，getChildren()用来设置子节点监听，以下几个监听条件会触发事件监听：</p>
+<p><strong>Create event</strong>：调用exists()设置节点创建的监听事件</p>
+<p><strong>Delete event</strong>：调用exits()、getData()和getChildren()设置节点删除的监听事件</p>
+<p><strong>Change event</strong>：调用exits()、getData()设置节点数据变更的监听事件</p>
+<p><strong>Child event</strong>：调用getChildren()设置子节点相关的监听事件</p>
+<p>具体的监听调用参见后续的API分析</p>
+<h1 id="访问权限"><a href="#访问权限" class="headerlink" title="访问权限"></a>访问权限</h1><p>ZK使用ACL来控制对节点的访问，ACL与UNIX文件访问很类似，在了解这个之前，先了解一下ZK的授权，ZK授权命令<strong>scheme : id : permission</strong>，表示认证方式、用户和权限，Scheme有以下几种：</p>
+<p><strong>world</strong>：相当于所有客户端都能访问，只有一个id—anyone，命令方式为world:anyone</p>
+<p><strong>auth</strong>：不需要设置用户，相当于授权给有权限的所有用户</p>
+<p><strong>digest</strong>：使用用户名:密码方式（username:password）来认证，ZK内部使用SHA1和MD5算法来进行加密</p>
+<p><strong>ip</strong>：根据IP认证，只允许认证的IP进行操作</p>
+<p>ACL支持的权限（Permission）有：</p>
+<p><strong>CREATE</strong>：创建当前节点下子节点的权限</p>
+<p><strong>READ</strong>：只读权限，包括遍历子节点</p>
+<p><strong>WRITE</strong>：写数据权限</p>
+<p><strong>DELETE</strong>：节点删除权限</p>
+<p><strong>ADMIN</strong>：设置权限的权限</p>
+<p>具体如何设置权限参见后续的API分析</p>
 
       
     </div>
@@ -394,9 +444,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+            <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
           
-            <a href="/tags/委派模式/" rel="tag"># 委派模式</a>
+            <a href="/tags/ACL/" rel="tag"># ACL</a>
           
         </div>
       
@@ -409,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/01/04/常用设计模式-原型模式/" rel="next" title="常用设计模式-原型模式">
-                <i class="fa fa-chevron-left"></i> 常用设计模式-原型模式
+              <a href="/2018/03/15/初识zookeeper/" rel="next" title="初识zookeeper">
+                <i class="fa fa-chevron-left"></i> 初识zookeeper
               </a>
             
           </div>
@@ -419,8 +469,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/01/07/常用设计模式-过程不同结果相似的策略模式/" rel="prev" title="常用设计模式-过程不同结果相似的策略模式">
-                常用设计模式-过程不同结果相似的策略模式 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/05/31/Spring事务详解(一)/" rel="prev" title="Spring事务详解(一)">
+                Spring事务详解(一) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -555,7 +605,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">1.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与代理模式的区别"><span class="nav-number">3.</span> <span class="nav-text">与代理模式的区别</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命名空间"><span class="nav-number">1.</span> <span class="nav-text">命名空间</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#节点"><span class="nav-number">2.</span> <span class="nav-text">节点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ZNode"><span class="nav-number">2.1.</span> <span class="nav-text">ZNode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stat"><span class="nav-number">2.2.</span> <span class="nav-text">Stat</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#会话"><span class="nav-number">3.</span> <span class="nav-text">会话</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#监听"><span class="nav-number">4.</span> <span class="nav-text">监听</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问权限"><span class="nav-number">5.</span> <span class="nav-text">访问权限</span></a></li></ol></div>
             
 
           </div>
