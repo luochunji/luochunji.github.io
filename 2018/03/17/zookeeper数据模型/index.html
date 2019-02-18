@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/03/17/zookeeper数据模型/Zookeeper树形结构.png">
 <meta property="og:image" content="http://yoursite.com/2018/03/17/zookeeper数据模型/state_dia.jpg">
-<meta property="og:updated_time" content="2019-02-16T09:08:15.952Z">
+<meta property="og:updated_time" content="2019-02-18T01:02:28.276Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zookeeper数据模型和特性">
 <meta name="twitter:description" content="本篇 主要分析zookeeper（以下简称ZK）的数据模型，包含命名空间、层次结构和节点类型等基本属性。ZK的命名空间与分布式的文件系统高度相似，唯一的区别是ZK的命名空间允许每个节点保存数据，就好比一个既是目录也是数据文件文件系统。">
@@ -409,7 +409,7 @@
 <li><strong>发送客户端通知</strong>，监听事件是异步发送的，ZK可以保证发送到客户端的通知是有序的，例如客户端对某个ZNode设置监听事件，在这个请求到达服务端前，其他客户端修改了这个ZNode的数据，那么发送请求的客户端是无法感知的。即使设置了监听事件，其他客户端对数据的修改也无法立即通知到这个客户端，因此ZK只能保持数据的最终一致。</li>
 <li><strong>watch数据监听</strong>，ZNode允许客户端对当前节点和子节点建立监听</li>
 </ol>
-<p>可以通过三个指令监听ZNode的状态，getData()和exists()用来设置当前节点，getChildren()用来设置子节点监听，以下几个监听条件会触发事件监听：</p>
+<p>可以通过API的三个方法监听ZNode的状态，getData()和exists()用来设置当前节点，getChildren()用来设置子节点监听，以下几个监听条件会触发事件监听：</p>
 <p><strong>Create event</strong>：调用exists()设置节点创建的监听事件</p>
 <p><strong>Delete event</strong>：调用exits()、getData()和getChildren()设置节点删除的监听事件</p>
 <p><strong>Change event</strong>：调用exits()、getData()设置节点数据变更的监听事件</p>
