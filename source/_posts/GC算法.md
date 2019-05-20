@@ -65,7 +65,7 @@ public class ReferenceCountingGC {
 [Full GC [PSYoungGen: 600K->0K(19456K)] [ParOldGen: 0K->503K(43520K)] 600K->503K(62976K) [PSPermGen: 1991K->1990K(16384K)], 0.0175707 secs] [Times: user=0.02 sys=0.00, real=0.02 secs] 
 ```
 
-但是从结果来看6138K->600K，他们确实被回收，并没有因为互相引用而不回收，这也证明了JVM不采用引用计数算法来判定对象是否存活。
+但是从结果来看600K->0K，他们确实被回收，并没有因为互相引用而不回收，这也证明了JVM不采用引用计数算法来判定对象是否存活。
 
 ## 可达性分析算法
 
