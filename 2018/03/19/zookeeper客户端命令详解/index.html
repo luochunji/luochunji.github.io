@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="zookeeper,zookeeper客户端命令,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本篇分析zookeeper客户端常用指令">
+<meta name="keywords" content="zookeeper,zookeeper客户端命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zookeeper客户端命令详解">
+<meta property="og:url" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/index.html">
+<meta property="og:site_name" content="阿吉-Share">
+<meta property="og:description" content="本篇分析zookeeper客户端常用指令">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/connect.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/help查看命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/ls命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/ls2命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/父节点不存在.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/创建节点.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/创建有序节点.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/创建临时节点.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/重连后节点被删除.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/getPath.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/dataVersion递增.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/set命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/删除节点.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/存在子节点，不允许删除.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/递归删除.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/stat命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/setquota命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/listquota.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/delquota命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/printwatches命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/printwatches监听打印.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/setAcl命令.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/getAcl.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/history.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/redo.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/close.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/quit.png">
+<meta property="og:updated_time" content="2019-06-23T14:08:54.838Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="zookeeper客户端命令详解">
+<meta name="twitter:description" content="本篇分析zookeeper客户端常用指令">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/connect.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"关键字","hits_empty":"无结果: ${query}","hits_stats":"${hits} 查询耗时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/">
+
+
+
+
+
+  <title>zookeeper客户端命令详解 | 阿吉-Share</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉-Share</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/zookeeper客户端命令详解/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">zookeeper客户端命令详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T20:10:45+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/zookeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">zookeeper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/19/zookeeper客户端命令详解/" class="leancloud_visitors" data-flag-title="zookeeper客户端命令详解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇分析zookeeper客户端常用指令</p>
+<a id="more"></a>
+<h2 id="启动客户端"><a href="#启动客户端" class="headerlink" title="启动客户端"></a>启动客户端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh zkCli.sh [-server ip:port] <span class="comment">#启动客户端</span></span><br></pre></td></tr></table></figure>
+<p>默认连接本机的zookeeper，如果指定server，尝试连接指定server的zookeeper</p>
+<h2 id="connect"><a href="#connect" class="headerlink" title="connect"></a>connect</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connect host:port <span class="comment">#连接zk服务端，与close命令配合使用可以连接或者断开zk服务端</span></span><br></pre></td></tr></table></figure>
+<p><img src="connect.png" alt=""></p>
+<h2 id="help"><a href="#help" class="headerlink" title="help"></a>help</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">help</span> <span class="comment">#查看有哪些命令</span></span><br></pre></td></tr></table></figure>
+<p><img src="help查看命令.png" alt=""></p>
+<p>以上是client支持的命令，注意每个命令符之间一定要有空格，两个常见的命令符做个统一说明：</p>
+<p><strong>path</strong> 表示节点的绝对路径（因为zookeeper不支持相对路径）</p>
+<p><strong>watch</strong> 表示是否对节点进行监听（节点的变更将发送客户端通知）</p>
+<h2 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls path [watch] <span class="comment">##查看path节点下的一级子节点</span></span><br></pre></td></tr></table></figure>
+<p><img src="ls命令.png" alt=""></p>
+<h2 id="ls2"><a href="#ls2" class="headerlink" title="ls2"></a>ls2</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls2 path [watch] <span class="comment">##查看path节点下的一级子节点，并返回当前节点的stat信息</span></span><br></pre></td></tr></table></figure>
+<p><img src="ls2命令.png" alt=""></p>
+<h2 id="create"><a href="#create" class="headerlink" title="create"></a>create</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create [-s] [-e] path data acl <span class="comment">##创建子节点</span></span><br></pre></td></tr></table></figure>
+<p>-s 表示是否为有序节点</p>
+<p>-e 表示是否为临时节点</p>
+<p>path 节点的绝对路径</p>
+<p>data 节点的数据</p>
+<p>acl 访问权限</p>
+<p>如果父节点不存在，无法创建，因此节点必须逐级创建。</p>
+<p><img src="父节点不存在.png" alt=""></p>
+<p>默认情况下（不带-s 和-e参数）创建的是持久节点</p>
+<p><img src="创建节点.png" alt=""></p>
+<p><img src="创建有序节点.png" alt=""></p>
+<p><img src="创建临时节点.png" alt=""></p>
+<p><img src="重连后节点被删除.png" alt=""></p>
+<h2 id="get"><a href="#get" class="headerlink" title="get"></a>get</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get path [watch] <span class="comment">##获取对应节点的数据和stat信息</span></span><br></pre></td></tr></table></figure>
+<p><img src="getPath.png" alt=""></p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> path data [version] <span class="comment">##设置存储的数据</span></span><br></pre></td></tr></table></figure>
+<p>[version] 为节点数据的版本，每次数据变更，dataVersion都会递增，version参数类似于乐观锁，指定修改对应version的节点数据，如果version不匹配，不做任何操作，不带version表示忽略版本号。</p>
+<p><img src="dataVersion递增.png" alt=""></p>
+<p><img src="set命令.png" alt=""></p>
+<h2 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete path [version] <span class="comment">#删除节点</span></span><br></pre></td></tr></table></figure>
+<p>和set命令一样，delete也可以删除指定version的节点，不带version则表示忽略版本号直接删除</p>
+<p><img src="删除节点.png" alt=""></p>
+<h2 id="rmr"><a href="#rmr" class="headerlink" title="rmr"></a>rmr</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rmr path <span class="comment">#递归删除</span></span><br></pre></td></tr></table></figure>
+<p>如果当前节点下存在子节点，直接删除当前节点会提示节点非空（存在子节点）</p>
+<p><img src="存在子节点，不允许删除.png" alt=""></p>
+<p>此时就要先删除子节点，才能删除当前节点，rmr命令允许递归删除当前节点。</p>
+<p><img src="递归删除.png" alt=""></p>
+<h2 id="stat"><a href="#stat" class="headerlink" title="stat"></a>stat</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stat</span> path [watch] <span class="comment">#获取节点stat信息</span></span><br></pre></td></tr></table></figure>
+<p>跟get的差异在于只获取stat的信息</p>
+<p><img src="stat命令.png" alt=""></p>
+<h2 id="setquota"><a href="#setquota" class="headerlink" title="setquota"></a>setquota</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setquota -n|-b val path <span class="comment">##设置配额属性</span></span><br></pre></td></tr></table></figure>
+<p>-n 表示该节点下子节点的个数count限制（包括当前节点自己）；</p>
+<p>-b 表示该节点存储的数据字节大小bytes限制；</p>
+<p><img src="setquota命令.png" alt=""></p>
+<h2 id="listquota"><a href="#listquota" class="headerlink" title="listquota"></a>listquota</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listquota path <span class="comment">#查看配额属性</span></span><br></pre></td></tr></table></figure>
+<p><img src="listquota.png" alt=""></p>
+<p>之前用setquota命令设置了最大节点count=3，bytes=-1表示不限制大小（count=-1也表示不限制），stat行count=1表示当前节点数为1，bytes=3表示当前字节大小为3</p>
+<h2 id="delquota"><a href="#delquota" class="headerlink" title="delquota"></a>delquota</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delquota [-n|-b] path  <span class="comment">#删除配合属性</span></span><br></pre></td></tr></table></figure>
+<p>-n 只删除count配额</p>
+<p>-b 只删除bytes配额</p>
+<p>不带-n | -b表示删除该节点的所有配额属性</p>
+<p><img src="delquota命令.png" alt=""></p>
+<h2 id="printwatches-on-off"><a href="#printwatches-on-off" class="headerlink" title="printwatches on|off"></a>printwatches on|off</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printwatches on|off <span class="comment">#开启/关闭 监听信息打印</span></span><br></pre></td></tr></table></figure>
+<p>查看是否开启打印监听</p>
+<p><img src="printwatches命令.png" alt=""></p>
+<p>对一个节点设置监听，然后修改节点数据</p>
+<p><img src="printwatches监听打印.png" alt=""></p>
+<h2 id="setAcl"><a href="#setAcl" class="headerlink" title="setAcl"></a>setAcl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setAcl path acl <span class="comment">#设置节点的访问权限</span></span><br></pre></td></tr></table></figure>
+<p>节点的访问权限必须单独设置，子节点无法继承父节点的访问权限。上一篇有提到zookeeper的ACL权限，授权命令为<strong>scheme : id : permission</strong>，permission对应Create（c）、Read（r）、Write（w）、Delete（d）、Admin（a）</p>
+<p><img src="setAcl命令.png" alt=""></p>
+<h2 id="getAcl"><a href="#getAcl" class="headerlink" title="getAcl"></a>getAcl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getAcl path <span class="comment">#获取节点的访问权限</span></span><br></pre></td></tr></table></figure>
+<p><img src="getAcl.png" alt=""></p>
+<h2 id="sync"><a href="#sync" class="headerlink" title="sync"></a>sync</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sync path <span class="comment">#在集群中强制同步节点信息</span></span><br></pre></td></tr></table></figure>
+<h2 id="history"><a href="#history" class="headerlink" title="history"></a>history</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">history</span> <span class="comment">#列出执行的命令历史</span></span><br></pre></td></tr></table></figure>
+<p><img src="history.png" alt=""></p>
+<h2 id="redo"><a href="#redo" class="headerlink" title="redo"></a>redo</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redo cmdno <span class="comment">#再次执行 id = cmdno的命令，需配合 history命令查出历史命令的id</span></span><br></pre></td></tr></table></figure>
+<p><img src="redo.png" alt=""></p>
+<h2 id="addauth"><a href="#addauth" class="headerlink" title="addauth"></a>addauth</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addauth scheme auth <span class="comment">#节点认证</span></span><br></pre></td></tr></table></figure>
+<h2 id="close"><a href="#close" class="headerlink" title="close"></a>close</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">close <span class="comment">#断开与zk服务端的连接</span></span><br></pre></td></tr></table></figure>
+<p><img src="close.png" alt=""></p>
+<p>断开后，Client状态由CONNECTED变更为CLOSED</p>
+<h2 id="quit"><a href="#quit" class="headerlink" title="quit"></a>quit</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quit <span class="comment">#退出客户端</span></span><br></pre></td></tr></table></figure>
+<p><img src="quit.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          
+            <a href="/tags/zookeeper客户端命令/" rel="tag"># zookeeper客户端命令</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/17/zookeeper数据模型/" rel="next" title="zookeeper数据模型和特性">
+                <i class="fa fa-chevron-left"></i> zookeeper数据模型和特性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/23/zookeeper客户端-java-api简单使用/" rel="prev" title="zookeeper客户端-java api简单使用">
+                zookeeper客户端-java api简单使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阿吉">
+            
+              <p class="site-author-name" itemprop="name">阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#启动客户端"><span class="nav-number">1.</span> <span class="nav-text">启动客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#connect"><span class="nav-number">2.</span> <span class="nav-text">connect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#help"><span class="nav-number">3.</span> <span class="nav-text">help</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ls"><span class="nav-number">4.</span> <span class="nav-text">ls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ls2"><span class="nav-number">5.</span> <span class="nav-text">ls2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#create"><span class="nav-number">6.</span> <span class="nav-text">create</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get"><span class="nav-number">7.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set"><span class="nav-number">8.</span> <span class="nav-text">set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#delete"><span class="nav-number">9.</span> <span class="nav-text">delete</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rmr"><span class="nav-number">10.</span> <span class="nav-text">rmr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stat"><span class="nav-number">11.</span> <span class="nav-text">stat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setquota"><span class="nav-number">12.</span> <span class="nav-text">setquota</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listquota"><span class="nav-number">13.</span> <span class="nav-text">listquota</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#delquota"><span class="nav-number">14.</span> <span class="nav-text">delquota</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#printwatches-on-off"><span class="nav-number">15.</span> <span class="nav-text">printwatches on|off</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setAcl"><span class="nav-number">16.</span> <span class="nav-text">setAcl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getAcl"><span class="nav-number">17.</span> <span class="nav-text">getAcl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sync"><span class="nav-number">18.</span> <span class="nav-text">sync</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#history"><span class="nav-number">19.</span> <span class="nav-text">history</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo"><span class="nav-number">20.</span> <span class="nav-text">redo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addauth"><span class="nav-number">21.</span> <span class="nav-text">addauth</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#close"><span class="nav-number">22.</span> <span class="nav-text">close</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#quit"><span class="nav-number">23.</span> <span class="nav-text">quit</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pHkCuEfhtMEwV8StKysroVAX-gzGzoHsz", "hxzd7uwHA3dPhriiJsk3gl9K");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

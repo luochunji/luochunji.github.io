@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="redis,redis性能,redis优化,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="实际开发的场景中，尤其是涉及到高并发的应用，关系型数据库常常无法满足业务需求，这时候从问题出发，尝试用redis这个基于内存的数据库，通常会因为它带来的几十倍甚至上百倍的性能使得问题迎刃而解。虽然满足了需求，但是redis性能还有没有提升的空间？在有限的资源内是不是已经把它的性能“榨干”？在这些问题之前，首先要明白redis在所使用的机器上到底能跑多快。">
+<meta name="keywords" content="redis,redis性能,redis优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-性能优化">
+<meta property="og:url" content="http://yoursite.com/2018/08/13/Redis-性能优化/index.html">
+<meta property="og:site_name" content="阿吉-Share">
+<meta property="og:description" content="实际开发的场景中，尤其是涉及到高并发的应用，关系型数据库常常无法满足业务需求，这时候从问题出发，尝试用redis这个基于内存的数据库，通常会因为它带来的几十倍甚至上百倍的性能使得问题迎刃而解。虽然满足了需求，但是redis性能还有没有提升的空间？在有限的资源内是不是已经把它的性能“榨干”？在这些问题之前，首先要明白redis在所使用的机器上到底能跑多快。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904112445724-1652978443.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904112752244-1289577016.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904145804746-722534064.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904194634102-1210051705.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904195432700-416914366.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904194919680-347358649.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180905110016018-2010380813.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180905144054922-2026558991.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180905162128979-1149695557.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180905162559948-1182549469.png">
+<meta property="og:updated_time" content="2019-07-06T07:56:42.505Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis-性能优化">
+<meta name="twitter:description" content="实际开发的场景中，尤其是涉及到高并发的应用，关系型数据库常常无法满足业务需求，这时候从问题出发，尝试用redis这个基于内存的数据库，通常会因为它带来的几十倍甚至上百倍的性能使得问题迎刃而解。虽然满足了需求，但是redis性能还有没有提升的空间？在有限的资源内是不是已经把它的性能“榨干”？在这些问题之前，首先要明白redis在所使用的机器上到底能跑多快。">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/13/Redis-性能优化/572667-20180904112445724-1652978443.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"关键字","hits_empty":"无结果: ${query}","hits_stats":"${hits} 查询耗时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/13/Redis-性能优化/">
+
+
+
+
+
+  <title>Redis-性能优化 | 阿吉-Share</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉-Share</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/Redis-性能优化/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis-性能优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-13T19:22:03+08:00">
+                2018-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/13/Redis-性能优化/" class="leancloud_visitors" data-flag-title="Redis-性能优化">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>实际开发的场景中，尤其是涉及到高并发的应用，关系型数据库常常无法满足业务需求，这时候从问题出发，尝试用redis这个基于内存的数据库，通常会因为它带来的几十倍甚至上百倍的性能使得问题迎刃而解。虽然满足了需求，但是redis性能还有没有提升的空间？在有限的资源内是不是已经把它的性能“榨干”？在这些问题之前，首先要明白redis在所使用的机器上到底能跑多快。</p>
+<a id="more"></a>
+<h1 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h1><p>redis的性能测试是通过<code>benchmark</code>命令执行的，格式为：<code>redis-benchmark [option &lt;value&gt;]</code>，例如：<code>redis-benchmark -c 1 -q</code>，常用命令参数如下表</p>
+<table>
+<thead>
+<tr>
+<th>option选项</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-h &lt;hostname&gt;</code></td>
+<td>服务端地址</td>
+<td>127.0.01</td>
+</tr>
+<tr>
+<td><code>-p &lt;port&gt;</code></td>
+<td>服务端口</td>
+<td>6379</td>
+</tr>
+<tr>
+<td><code>-s &lt;socket&gt;</code></td>
+<td>服务端socket</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-a &lt;password&gt;</code></td>
+<td>密码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-c &lt;clients&gt;</code></td>
+<td>并发连接</td>
+<td>50</td>
+</tr>
+<tr>
+<td><code>-n &lt;requests&gt;</code></td>
+<td>请求数</td>
+<td>100000</td>
+</tr>
+<tr>
+<td><code>-d &lt;size&gt;</code></td>
+<td>以字节形式指定set/get值的大小</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>--dbnum &lt;db&gt;</code></td>
+<td>选择数据库</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>-k &lt;boolean&gt;</code></td>
+<td>1=keep alive 0=reconnect</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>-r &lt;keyspacelen&gt;</code></td>
+<td><code>set</code>/<code>get</code>/<code>INCR</code>使用随机 key, SADD 使用随机值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-p &lt;numreq&gt;</code></td>
+<td>使用管道方式发送请求</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-q</code></td>
+<td>退出redis，仅显示query/sec值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>--csv</code></td>
+<td>以csv格式输出</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-1</code></td>
+<td>循环，不中断测试</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-t &lt;tests&gt;</code></td>
+<td>仅运行\&lt;tests>中以逗号分隔的命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-I</code></td>
+<td>Idle 模式。仅打开 N 个 idle 连接并等待</td>
+</tr>
+</tbody>
+</table>
+<p>单机，CPU:<a href="mailto:i5-2430M@2.40GHz" target="_blank" rel="noopener">i5-2430M@2.40GHz</a>，内存8GB，cygwin虚拟环境，单客户端，请求数10000，测试结果如下：</p>
+<p><img src="572667-20180904112445724-1652978443.png" alt="img"></p>
+<blockquote>
+<p>因为笔记本配置不高，又是在虚拟环境下，所以非管道方式下的测试数据显得性能一般，改为管道模式再测试一次</p>
+</blockquote>
+<p><img src="572667-20180904112752244-1289577016.png" alt="img"></p>
+<p>以上两组结果展示了一些常用redis命令在1秒内可以执行的次数，如果redis-benchmark不带任何参数，将默认使用50个客户端来进行性能测试。从以上运行结果可见在管道模式下，redis性能是非管道模式下的十几倍甚至几十倍以上，但是这些结果并不代表实际性能，因为这个测试程序只负责测试命令本身的执行，并不处理返回的结果。当发现客户端的实际性能和测试结果差距较大时，可能的原因有：</p>
+<ol>
+<li>没有使用管道模式</li>
+<li>redis的每个/每组命令都创建了新的连接</li>
+</ol>
+<p>第一个问题好解决，使用pipeline即可。第二个问题要如何解决呢？首先了解一下redis客户端与服务端的交互方式。客户端向redis服务端发送命令前，首先要建立连接，redis的服务端和客户端一般都不在一台物理机上，因此需要通过底层的网络通讯建立连接，假设一次交互从请求到响应结束共耗时10ms，redis的性能很高，只用了1ms将数据处理完毕，网络传输和建立连接耗时9ms，在高并发场景下，大量的时间都消耗在网络传输和建立连接上，之前提到的管道模型可以解决频繁网络传输的问题，那么如何解决频繁连接的问题？redis的连接池就是为了这个场景而设计的。redis的连接池在客户端建立多个连接而不释放，当需要连接服务端的时候，从池中取出连接，处理完毕后将连接归还池中重用，就避免了反复建立连接的时间消耗，也保证在多线程环境下的安全。常用开发语言的客户端都有连接池的实现。</p>
+<h1 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h1><p>计算机发展到今天，内存依然是很宝贵的资源，价格也居高不下（屯内存发家致富。。。），redis是基于内存的数据库，所有的数据都存储在内存中，所以如何优化内存，减少空间占用是一个非常重要的话题。</p>
+<h2 id="精简、规范的key名和value"><a href="#精简、规范的key名和value" class="headerlink" title="精简、规范的key名和value"></a>精简、规范的key名和value</h2><p>这是最直接的减少内存占用的方式，如very.important.person:20可以改为vip:20，但是不建议写成v:20，精简的原则是保证可读性和易维护性以及尽量避免冲突。比如存储性别的key的值是male和female，可以优化为0和1来表示。</p>
+<h2 id="内部编码优化"><a href="#内部编码优化" class="headerlink" title="内部编码优化"></a>内部编码优化</h2><p>如果靠精简key和value不足以满足减少空间的需求，这时候就要根据redis的内部编码方式来节省更多的空间。redis为每种数据类型都提供了两种编码方式（字符串类型的embstr编码是3.0版加入的，列表类型的quicklist编码是3.2版加入的，在此暂不介绍了）,以散列为例，散列是通过hashTable实现的，查找、赋值的时间复杂度是<strong>O(1)</strong>，如果散列中的元素很少，<strong>O(1)</strong>的性能和<strong>O(n)</strong>比没有绝对优势，这种情况下redis会采用一种更紧凑，更节约空间的编码方式zipList实现。当散列的数据增多，编码方式会自动转为hashTable（这个转换过程是透明的，由redis内部自动完成），查看一个key的编码方式，可以使用<code>object encoding</code>命令</p>
+<p><img src="572667-20180904145804746-722534064.png" alt="img"></p>
+<p>redis的底层存储模型都是一个redisObject，它的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> notused:<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> encoding:<span class="number">5</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> lru:<span class="number">22</span>;</span><br><span class="line">    <span class="keyword">int</span> refcount;</span><br><span class="line">    <span class="keyword">void</span> *ptr;    </span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+<p>其中type字段表示的是key的数据类型，取值如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_STRING 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_LIST   1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_SET    2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ZSET   3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_HASH   4</span></span><br></pre></td></tr></table></figure>
+<p>encoding字段表示的就是编码方式，取值如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_RAW 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_INT 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_HT 2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_ZIPMAP 3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_LINKEDLIST 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_ZIPLIST 5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_INTSET 6</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_SKIPLIST 7</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_ENCODING_EMBSTR 8</span></span><br></pre></td></tr></table></figure>
+<p>各数据类型的编码方式、满足条件和执行<code>object encoding</code>命令后的结果</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>redis使用sdshdr类型变量来存储字符串，上文提到的redisObject的ptr属性指向该变量的地址。sdshdr的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">      <span class="keyword">int</span> len;    <span class="comment">//字符串长度</span></span><br><span class="line">      <span class="keyword">int</span> <span class="built_in">free</span>;   <span class="comment">//buf可用空间</span></span><br><span class="line">      <span class="keyword">char</span> buf[]; <span class="comment">//字符串内容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当value时字符串且长度大于39时，例如：<code>set key &quot;hello world,hello world,hello world,hello world&quot;</code>，redis将以raw编码方式存储，如图</p>
+<p><img src="572667-20180904194634102-1210051705.png" alt="img"></p>
+<p>当value是非整型字符串时且长度小于39时，例如：<code>set key redis</code>，redis将以embstr编码方式存储，如图</p>
+<p><img src="572667-20180904195432700-416914366.png" alt="img"></p>
+<p>与raw的差异是，<strong>embstr编码方式的sdshdr是与redisObject在连续的内存空间中</strong>。</p>
+<p>当value可以用64位的有符号整数表示时，redis会转换成long类型并以int编码方式存储。例如：<code>set key 123</code></p>
+<p><img src="572667-20180904194919680-347358649.png" alt="img"></p>
+<p>redisObject结构中的refcount字段存储的是value被引用的数量，在这种结构中，value可以被多个key引用。redis会预先存储0到9999这些数字的redisObject对象，如果set的key在这10000个数字内，可以直接引用已经创建的对象，而不是重新建一个（有点像Java的常量池），这种共享方式能够节约一定的存储空间。</p>
+<h3 id="散列"><a href="#散列" class="headerlink" title="散列"></a>散列</h3><p>散列的编码方式有两种：hashtable和ziplist，在配置文件中可以定义使用ziplist的条件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hash-max-ziplist-entries 512</span><br><span class="line">hash-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+<p>当散列的字段个数小于hash-max-ziplist-entries且每个字段和字段值的长度都小于hash-max-ziplist-value时，使用ziplist编码存储，否则用hashtable。ziplist编码是一种紧凑型的编码格式，它以时间换空间的方式提高存储空间的利用率，适合在散列字段较少时使用。ziplist的内存结构如下：</p>
+<p><img src="572667-20180905110016018-2010380813.png" alt="img"></p>
+<p>zlbytes是<code>uint32_t</code>类型，表示占用空间，长度为4字节，zltail也是<code>uint32_t</code>类型，长度为4字节，表示到最后一个元素的偏移量，记录zltail可以使程序直接定位到尾部元素而无需遍历整个结构。zllen是<code>unit16_t</code>类型，存储的是元素的数量，长度是2字节，zlend用来标记结构的末尾，值是255，长度1字节。</p>
+<p>　　ziplist的每个元素由4个部分组成，第一部分用来存储前一个元素的大小以实现倒序查找，当前一个元素的大小&lt;254字节时，第一个部分占用1字节，否则占用5字节。第二、三部分分别表示元素的编码类型和元素大小，当元素大小&lt;=63字节，元素编码类型是<code>ZIP_STR_06B</code>（0&lt;&lt;6），同时第三个部分用6个二进制位来记录元素的长度，所以第二、三部门总占用1字节。当63字节&lt;元素&lt;=16383字节时，元素编码类型是<code>ZIP_STR_14B</code>，总占用2字节，当元素&gt;16383时，元素编码为<code>ZIP_STR_32B</code>占用5字节。第四部分就是元素的存储内容，reids在多种编码方式中，都会将可以转为数字类型的字符以数字来存储，此时第二、三个部分来表示数字的类型（此时的编码方式为<code>ZIP_INT_16B</code>、<code>ZIP_INT_32B</code>等）。当执行命令hset hello world时，内存结构如图：</p>
+<p><img src="572667-20180905144054922-2026558991.png" alt="img"></p>
+<p>从结构上来看，ziplist比hashtable节省了前驱指针和后驱指针的空间，数据是连续的，具有清晰的边界，在遍历ziplist时，每次查找会跳过一个元素确保只查找字段名，找到后取下一个元素就是字段值，因此在元素个数不多时，这个性能还是可以接受的。</p>
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><p>列表的编码方式也有两种，分别为linkedlist和ziplist，linkedlist是一种非常常见的数据结构，每个Node有一个prev指针和next指针组成双端链表。ziplist上面已经介绍过了，就不再说明了。配置文件中可以定义使用ziplist的条件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list-max-ziplist-entries 512</span><br><span class="line">list-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+<p>当列表的元素个数少于512且所有元素都小于64字节时，使用ziplist编码存储。redis3.2版新增了quicklist编码方式，这个编码方式可以看作是linkedlist和ziplist的结合，其原理是将长linkedlist分成若干个以链表形式组成的ziplist，即发挥了ziplist编码减少空间的优势，又具有linkedlist编码的性能。</p>
+<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>集合的编码方式也是两种，分别为hashtable和intset，配置文件中可以定义使用intset的条件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set-max-intset-entries 512</span><br></pre></td></tr></table></figure>
+<p>除了元素个数小于配置的值外，还必须满足所有元素都是整数。intset编码结构的定义为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span>&#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding; <span class="comment">//编码方式</span></span><br><span class="line">    <span class="keyword">uint32_t</span> length;   <span class="comment">//元素个数</span></span><br><span class="line">    <span class="keyword">int8_t</span> contents[]; <span class="comment">//内容数组</span></span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+<p>​    intset的数据结构由三部分构成，encoding编码方式，length元素个数，contents元素内容数组。虽然contents声明为int8_t，但是实际类型还是取决于encoding的值，encoding的取值有以下三种：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">INTSET_ENC_INT16</span><br><span class="line">INTSET_ENC_INT32</span><br><span class="line">INTSET_ENC_INT64</span><br></pre></td></tr></table></figure>
+<p>​    默认的encoding是<code>INTSET_ENC_INT16</code>（2字节），当新插入的元素大于2字节时，集合的encoding会升级为<code>INTSET_ENC_INT32</code>（4字节）并调整元素的位置和长度，如果还无法满足，将升级为<code>INTSET_ENC_INT64</code>（8字节）。intset编码方式是有序的存储元素，因此无论是插入还是删除元素，都要调整元素后面的位置，当元素太多时，性能很差。当新增的元素不是整数或个数超过了配置的参数值，redis将集合的编码方式自动转换为hashtable（这种转换时不可逆的，即使删除了非整数元素或将个数减少到范围内，也无法改变编码方式，假如这么做了，就需要重新遍历集合的所有元素，时间复杂度为<strong>O(n)</strong>）。</p>
+<h3 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h3><p>有序集合的编码方式可能是skiplist和ziplist，同样可以在配置文件中定义使用ziplist的条件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+<p>使用条件与散列、列表的ziplist一样，这里主要介绍skiplist。先看看skiplist的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplist</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">header</span>, *<span class="title">tail</span>;</span>    <span class="comment">// 跳表头尾指针</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;   <span class="comment">// 跳表的长度</span></span><br><span class="line">    <span class="keyword">int</span> level;    <span class="comment">// 跳表的高度</span></span><br><span class="line">&#125; zskiplist;</span><br><span class="line"></span><br><span class="line"><span class="comment">//跳表节点</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> &#123;</span></span><br><span class="line">    redisObject *obj; <span class="comment">// 节点数据</span></span><br><span class="line">    <span class="keyword">double</span> score;<span class="comment">// 分数</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backward</span>;</span>  <span class="comment">// 后驱指针</span></span><br><span class="line">    <span class="comment">// 前驱指针数组</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistLevel</span> &#123;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span></span><br><span class="line">       </span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> span;  <span class="comment">// 到下一个数据的偏移量</span></span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br></pre></td></tr></table></figure>
+<p>跳表包含4个属性：header、tail、length和level，其中header和tail都是由zskiplistNode（后面简称Node），node中保存元素的redisObject。以header为例，</p>
+<p><img src="572667-20180905162128979-1149695557.png" alt="img"></p>
+<p>可以看出跳表的数据由多个层级组成，每个层级间隔保存了链表的节点数据，这样的优点是查找效率类似二分查找法，比如要查找score = 86这个节点，查找过程如下</p>
+<p><img src="572667-20180905162559948-1182549469.png" alt="img"></p>
+<p>整个过程只比较了三次（横向箭头比较，竖向箭头不比较），比普通链表从头开始遍历节省了时间，缺点也很明显，浪费了空间。跳表在有序集合中元素个数很大的情况下，查询效率可以媲美二分法，但是对内存的浪费也很明显。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+            <a href="/tags/redis性能/" rel="tag"># redis性能</a>
+          
+            <a href="/tags/redis优化/" rel="tag"># redis优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/09/Redis-特性（下）/" rel="next" title="Redis-特性（下）">
+                <i class="fa fa-chevron-left"></i> Redis-特性（下）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/17/Redis-持久化/" rel="prev" title="Redis-持久化">
+                Redis-持久化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阿吉">
+            
+              <p class="site-author-name" itemprop="name">阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#性能"><span class="nav-number">1.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存优化"><span class="nav-number">2.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#精简、规范的key名和value"><span class="nav-number">2.1.</span> <span class="nav-text">精简、规范的key名和value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内部编码优化"><span class="nav-number">2.2.</span> <span class="nav-text">内部编码优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">2.2.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#散列"><span class="nav-number">2.2.2.</span> <span class="nav-text">散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">2.2.3.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">2.2.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">2.2.5.</span> <span class="nav-text">有序集合</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pHkCuEfhtMEwV8StKysroVAX-gzGzoHsz", "hxzd7uwHA3dPhriiJsk3gl9K");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

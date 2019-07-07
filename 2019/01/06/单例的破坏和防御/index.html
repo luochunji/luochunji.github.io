@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="单例,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上篇介绍了几种单例的写法，这一片介绍如何破坏单例以及防御">
+<meta name="keywords" content="单例">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单例的破坏和防御">
+<meta property="og:url" content="http://yoursite.com/2019/01/06/单例的破坏和防御/index.html">
+<meta property="og:site_name" content="阿吉-Share">
+<meta property="og:description" content="上篇介绍了几种单例的写法，这一片介绍如何破坏单例以及防御">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-23T14:08:54.863Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单例的破坏和防御">
+<meta name="twitter:description" content="上篇介绍了几种单例的写法，这一片介绍如何破坏单例以及防御">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"关键字","hits_empty":"无结果: ${query}","hits_stats":"${hits} 查询耗时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/06/单例的破坏和防御/">
+
+
+
+
+
+  <title>单例的破坏和防御 | 阿吉-Share</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉-Share</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/06/单例的破坏和防御/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">单例的破坏和防御</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-06T18:14:25+08:00">
+                2019-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/06/单例的破坏和防御/" class="leancloud_visitors" data-flag-title="单例的破坏和防御">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上篇介绍了几种单例的写法，这一片介绍如何破坏单例以及防御</p>
+<a id="more"></a>
+<h1 id="反射破坏"><a href="#反射破坏" class="headerlink" title="反射破坏"></a>反射破坏</h1><p>思考一个问题，单例真的安全吗？以懒汉式单例为例，将构造器声明为private，是不是就万无一失，无法用构造器对其实例化？在Java的特性——反射面前，私有构造器也不起作用了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException </span>&#123;</span><br><span class="line">    LazySingleton singleton1 = LazySingleton.getInstance();</span><br><span class="line">    LazySingleton singleton2 = getInstanceByConstruct();</span><br><span class="line">    System.out.println(<span class="string">"singleton1 == singleton2 :"</span> + (singleton1 == singleton2));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过反射实例化对象</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> NoSuchMethodException</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalAccessException</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InvocationTargetException</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InstantiationException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySingleton <span class="title">getInstanceByConstruct</span><span class="params">()</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException </span>&#123;</span><br><span class="line">    Class clazz = LazySingleton.class;</span><br><span class="line">    Constructor constructor = clazz.getDeclaredConstructor();</span><br><span class="line">    <span class="comment">//访问权限</span></span><br><span class="line">    constructor.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">return</span>  (LazySingleton) constructor.newInstance();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">singleton1 == singleton2 :false</span><br></pre></td></tr></table></figure>
+<p>通过反射成功实例化对象，单例破坏，那么要如何防御？</p>
+<h1 id="防御反射破坏"><a href="#防御反射破坏" class="headerlink" title="防御反射破坏"></a>防御反射破坏</h1><p>既然是通过构造器实例化，自然而然可以想到，可以在构造器里防止单例被破坏。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">LazySingleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//加上判断，防止通过构造器被再次实例化</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">null</span> != instance)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"单例已存在"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再运行一次main方法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread "main" java.lang.reflect.InvocationTargetException</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)</span><br><span class="line">	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)</span><br><span class="line">	at com.cjluo.chapter1.singleton.test.BreakSingleton.getInstanceByConstruct(BreakSingleton.java:35)</span><br><span class="line">	at com.cjluo.chapter1.singleton.test.BreakSingleton.main(BreakSingleton.java:17)</span><br><span class="line">Caused by: java.lang.RuntimeException: 单例已存在</span><br><span class="line">	at com.cjluo.chapter1.singleton.LazySingleton.&lt;init&gt;(LazySingleton.java:18)</span><br><span class="line">	... 6 more</span><br></pre></td></tr></table></figure>
+<p>抛出异常，实例化失败，提示单例已存在，成功防御通过反射对单例的破坏。但是，单例安全了吗？还可以通过其他方式破坏吗？当然可以，接下来介绍如何通过拷贝对象破坏单例。</p>
+<h1 id="对象拷贝破坏"><a href="#对象拷贝破坏" class="headerlink" title="对象拷贝破坏"></a>对象拷贝破坏</h1><p>前面介绍了原型模式和深拷贝，这里就通过深拷贝破坏单例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException </span>&#123;</span><br><span class="line">        LazySingleton singleton1 = LazySingleton.getInstance();</span><br><span class="line">        LazySingleton singleton3 = deepClone(singleton1);</span><br><span class="line">        System.out.println(<span class="string">"singleton1 == singleton2 :"</span> + (singleton1 == singleton3));</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 深拷贝</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> singleton</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySingleton <span class="title">deepClone</span><span class="params">(LazySingleton singleton)</span> </span>&#123;</span><br><span class="line">    ByteArrayOutputStream bos = <span class="keyword">null</span>;</span><br><span class="line">    ObjectOutputStream oos = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    ByteArrayInputStream bis;</span><br><span class="line">    ObjectInputStream ois;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        bos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">        oos = <span class="keyword">new</span> ObjectOutputStream(bos);</span><br><span class="line">        oos.writeObject(singleton);</span><br><span class="line"></span><br><span class="line">        bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray());</span><br><span class="line">        ois = <span class="keyword">new</span> ObjectInputStream(bis);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (LazySingleton) ois.readObject();</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            bos.close();</span><br><span class="line">            oos.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">singleton1 == singleton2 :false</span><br></pre></td></tr></table></figure>
+<p>对象被序列化、反序列化后生成的实例，已经破坏了单例。这种方式的破坏如何防御呢？先从readObject()源码分析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ObjectInputStream.readObject</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">readObject</span><span class="params">()</span> <span class="keyword">throws</span> IOException, ClassNotFoundException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (enableOverride) &#123;</span><br><span class="line">        <span class="keyword">return</span> readObjectOverride();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if nested read, passHandle contains handle of enclosing object</span></span><br><span class="line">    <span class="keyword">int</span> outerHandle = passHandle;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//进入readObject0方法</span></span><br><span class="line">        Object obj = readObject0(<span class="keyword">false</span>);</span><br><span class="line">        handles.markDependency(outerHandle, passHandle);</span><br><span class="line">        ClassNotFoundException ex = handles.lookupException(passHandle);</span><br><span class="line">        <span class="keyword">if</span> (ex != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (depth == <span class="number">0</span>) &#123;</span><br><span class="line">            vlist.doCallbacks();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        passHandle = outerHandle;</span><br><span class="line">        <span class="keyword">if</span> (closed &amp;&amp; depth == <span class="number">0</span>) &#123;</span><br><span class="line">            clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readObject0</span><span class="params">(<span class="keyword">boolean</span> unshared)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> oldMode = bin.getBlockDataMode();</span><br><span class="line">        <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">            <span class="keyword">int</span> remain = bin.currentBlockRemaining();</span><br><span class="line">            <span class="keyword">if</span> (remain &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> OptionalDataException(remain);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (defaultDataEnd) &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Fix for 4360508: stream is currently at the end of a field</span></span><br><span class="line"><span class="comment">                 * value block written via default serialization; since there</span></span><br><span class="line"><span class="comment">                 * is no terminating TC_ENDBLOCKDATA tag, simulate</span></span><br><span class="line"><span class="comment">                 * end-of-custom-data behavior explicitly.</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> OptionalDataException(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            bin.setBlockDataMode(<span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">byte</span> tc;</span><br><span class="line">        <span class="keyword">while</span> ((tc = bin.peekByte()) == TC_RESET) &#123;</span><br><span class="line">            bin.readByte();</span><br><span class="line">            handleReset();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        depth++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">        	<span class="comment">//判断对象类型</span></span><br><span class="line">            <span class="keyword">switch</span> (tc) &#123;</span><br><span class="line">                <span class="keyword">case</span> TC_NULL:</span><br><span class="line">                    <span class="keyword">return</span> readNull();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_REFERENCE:</span><br><span class="line">                    <span class="keyword">return</span> readHandle(unshared);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_CLASS:</span><br><span class="line">                    <span class="keyword">return</span> readClass(unshared);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_CLASSDESC:</span><br><span class="line">                <span class="keyword">case</span> TC_PROXYCLASSDESC:</span><br><span class="line">                    <span class="keyword">return</span> readClassDesc(unshared);</span><br><span class="line">                <span class="comment">//字符串</span></span><br><span class="line">                <span class="keyword">case</span> TC_STRING:</span><br><span class="line">                <span class="keyword">case</span> TC_LONGSTRING:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readString(unshared));</span><br><span class="line">                <span class="comment">//数组</span></span><br><span class="line">                <span class="keyword">case</span> TC_ARRAY:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readArray(unshared));</span><br><span class="line">                <span class="comment">//枚举</span></span><br><span class="line">                <span class="keyword">case</span> TC_ENUM:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readEnum(unshared));</span><br><span class="line">                <span class="comment">//对象</span></span><br><span class="line">                <span class="keyword">case</span> TC_OBJECT:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readOrdinaryObject(unshared));</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_EXCEPTION:</span><br><span class="line">                    IOException ex = readFatalException();</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> WriteAbortedException(<span class="string">"writing aborted"</span>, ex);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_BLOCKDATA:</span><br><span class="line">                <span class="keyword">case</span> TC_BLOCKDATALONG:</span><br><span class="line">                    <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">                        bin.setBlockDataMode(<span class="keyword">true</span>);</span><br><span class="line">                        bin.peek();             <span class="comment">// force header read</span></span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> OptionalDataException(</span><br><span class="line">                            bin.currentBlockRemaining());</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> StreamCorruptedException(</span><br><span class="line">                            <span class="string">"unexpected block data"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">case</span> TC_ENDBLOCKDATA:</span><br><span class="line">                    <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> OptionalDataException(<span class="keyword">true</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> StreamCorruptedException(</span><br><span class="line">                            <span class="string">"unexpected end of block data"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> StreamCorruptedException(</span><br><span class="line">                        String.format(<span class="string">"invalid type code: %02X"</span>, tc));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            depth--;</span><br><span class="line">            bin.setBlockDataMode(oldMode);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>反序列化时，会先判断对象的类型，String、Array、Object等，如果是Object，进入readOrdinaryObject方法读取对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (bin.readByte() != TC_OBJECT) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> InternalError();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//读取对象的属性、方法，后面会用到</span></span><br><span class="line">ObjectStreamClass desc = readClassDesc(<span class="keyword">false</span>);</span><br><span class="line">desc.checkDeserialize();</span><br></pre></td></tr></table></figure>
+<p>首先，readClassDesc会读取对象的属性和几个特殊方法（writeObjectMethod、readObjectMethod、readObjectNoDataMethod、writeReplaceMethod、readResolveMethod），紧接着再次判断对象类型是否为普通的对象，然后进行实例化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; cl = desc.forClass();</span><br><span class="line">     <span class="keyword">if</span> (cl == String.class || cl == Class.class</span><br><span class="line">             || cl == ObjectStreamClass.class) &#123;</span><br><span class="line">         <span class="keyword">throw</span> <span class="keyword">new</span> InvalidClassException(<span class="string">"invalid class descriptor"</span>);</span><br><span class="line">     &#125; </span><br><span class="line"></span><br><span class="line">Object obj;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">         <span class="comment">//对象实例化</span></span><br><span class="line">         obj = desc.isInstantiable() ? desc.newInstance() : <span class="keyword">null</span>;</span><br><span class="line">     &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">         <span class="keyword">throw</span> (IOException) <span class="keyword">new</span> InvalidClassException(</span><br><span class="line">             desc.forClass().getName(),</span><br><span class="line">             <span class="string">"unable to create instance"</span>).initCause(ex);</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>接下来的几行代码是各种校验，重点的代码在这里</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//重点在这行，hasReadResolveMethod判断是否有readResolve方法</span></span><br><span class="line"> <span class="keyword">if</span> (obj != <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">     handles.lookupException(passHandle) == <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">     desc.hasReadResolveMethod())</span><br><span class="line"> &#123;</span><br><span class="line">     <span class="comment">//调用ReadResolve方法</span></span><br><span class="line">     Object rep = desc.invokeReadResolve(obj);</span><br><span class="line">     <span class="keyword">if</span> (unshared &amp;&amp; rep.getClass().isArray()) &#123;</span><br><span class="line">         rep = cloneArray(rep);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (rep != obj) &#123;</span><br><span class="line">         handles.setObject(passHandle, obj = rep);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>读取readResolve方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Object <span class="title">invokeReadResolve</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> IOException, UnsupportedOperationException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    requireInitialized();</span><br><span class="line">    <span class="keyword">if</span> (readResolveMethod != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> readResolveMethod.invoke(obj, (Object[]) <span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InvocationTargetException ex) &#123;</span><br><span class="line">            Throwable th = ex.getTargetException();</span><br><span class="line">            <span class="keyword">if</span> (th <span class="keyword">instanceof</span> ObjectStreamException) &#123;</span><br><span class="line">                <span class="keyword">throw</span> (ObjectStreamException) th;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                throwMiscException(th);</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> InternalError(th);  <span class="comment">// never reached</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException ex) &#123;</span><br><span class="line">            <span class="comment">// should not occur, as access checks have been suppressed</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> InternalError(ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="防御拷贝破坏"><a href="#防御拷贝破坏" class="headerlink" title="防御拷贝破坏"></a>防御拷贝破坏</h1><p>如果我们要防止单例被深拷贝破坏，关键点就在于对象是否有readResolve方法。在LazySingleton加上该方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再次运行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">singleton1 == singleton2 :<span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+<h1 id="无法破坏的单例"><a href="#无法破坏的单例" class="headerlink" title="无法破坏的单例"></a>无法破坏的单例</h1><p>前文有提到一种单例写法，是很完美的单例——枚举单例，它既保证线程安全，又不需要任何同步加锁操作，除此之外，它可以防御以上两种单例的破坏，因为JDK在底层实现上就做了防御处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EnumSingleton &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 枚举实例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    EnumSingleton() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过反射获取构造器实例化单例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException </span>&#123;</span><br><span class="line">       EnumSingleton enumSingleton = EnumSingleton.INSTANCE;</span><br><span class="line">       EnumSingleton enumSingleton1 = getInstance();</span><br><span class="line">       System.out.println(<span class="string">"enumSingleton == enumSingleton1 :"</span> + (enumSingleton == enumSingleton1));</span><br><span class="line"></span><br><span class="line">   &#125;    </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> EnumSingleton <span class="title">getInstance</span><span class="params">()</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException </span>&#123;</span><br><span class="line">       Class clazz = EnumSingleton.class;</span><br><span class="line">       Constructor constructor = clazz.getDeclaredConstructor(String.class,<span class="keyword">int</span>.class);</span><br><span class="line">       <span class="comment">//访问权限</span></span><br><span class="line">       constructor.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       <span class="keyword">return</span>  (EnumSingleton) constructor.newInstance();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果，无法通过反射实例化枚举对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> java.lang.IllegalArgumentException: Cannot reflectively create <span class="keyword">enum</span> objects</span><br><span class="line">	at java.lang.reflect.Constructor.newInstance(Constructor.java:<span class="number">416</span>)</span><br><span class="line">	at com.cjluo.chapter1.singleton.test.BreakSingleton.getInstance(BreakSingleton.java:<span class="number">49</span>)</span><br><span class="line">	at com.cjluo.chapter1.singleton.test.BreakSingleton.main(BreakSingleton.java:<span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+<p>对应的源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">newInstance</span><span class="params">(Object ... initargs)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> InstantiationException, IllegalAccessException,</span></span><br><span class="line"><span class="function">           IllegalArgumentException, InvocationTargetException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!override) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!Reflection.quickCheckMemberAccess(clazz, modifiers)) &#123;</span><br><span class="line">            Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">            checkAccess(caller, clazz, <span class="keyword">null</span>, modifiers);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//对class类型进行校验，如果是枚举，直接抛出异常</span></span><br><span class="line">    <span class="keyword">if</span> ((clazz.getModifiers() &amp; Modifier.ENUM) != <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Cannot reflectively create enum objects"</span>);</span><br><span class="line">    ConstructorAccessor ca = constructorAccessor;   <span class="comment">// read volatile</span></span><br><span class="line">    <span class="keyword">if</span> (ca == <span class="keyword">null</span>) &#123;</span><br><span class="line">        ca = acquireConstructorAccessor();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    T inst = (T) ca.newInstance(initargs);</span><br><span class="line">    <span class="keyword">return</span> inst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>JDK底层将反射实例化的类型做了限制，排除了枚举。因此这种方式无法破坏枚举单例，那么通过深拷贝的方式呢？（深拷贝代码与上述相似，不再列举）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException </span>&#123;</span><br><span class="line">       EnumSingleton enumSingleton = EnumSingleton.INSTANCE;</span><br><span class="line">       EnumSingleton enumSingleton1 = deepClone(enumSingleton);</span><br><span class="line">       System.out.println(<span class="string">"enumSingleton == enumSingleton1 :"</span> + (enumSingleton == enumSingleton1));</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">enumSingleton == enumSingleton1 :true</span><br></pre></td></tr></table></figure>
+<p>通过对象拷贝，不需要额外处理，枚举的单例也不会被破坏。分析源码readObject0方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readObject0</span><span class="params">(<span class="keyword">boolean</span> unshared)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//省略...</span></span><br><span class="line">        depth++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">        	<span class="comment">//判断对象类型</span></span><br><span class="line">            <span class="keyword">switch</span> (tc) &#123;</span><br><span class="line">                <span class="comment">//省略...</span></span><br><span class="line">                <span class="comment">//枚举</span></span><br><span class="line">                <span class="keyword">case</span> TC_ENUM:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readEnum(unshared));</span><br><span class="line">                <span class="comment">//对象</span></span><br><span class="line">                <span class="keyword">case</span> TC_OBJECT:</span><br><span class="line">                    <span class="keyword">return</span> checkResolve(readOrdinaryObject(unshared));</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> StreamCorruptedException(</span><br><span class="line">                        String.format(<span class="string">"invalid type code: %02X"</span>, tc));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            depth--;</span><br><span class="line">            bin.setBlockDataMode(oldMode);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>readEnum，返回枚举实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Enum&lt;?&gt; readEnum(<span class="keyword">boolean</span> unshared) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">if</span> (bin.readByte() != TC_ENUM) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InternalError();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ObjectStreamClass desc = readClassDesc(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">if</span> (!desc.isEnum()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidClassException(<span class="string">"non-enum class: "</span> + desc);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> enumHandle = handles.assign(unshared ? unsharedMarker : <span class="keyword">null</span>);</span><br><span class="line">    ClassNotFoundException resolveEx = desc.getResolveException();</span><br><span class="line">    <span class="keyword">if</span> (resolveEx != <span class="keyword">null</span>) &#123;</span><br><span class="line">        handles.markException(enumHandle, resolveEx);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String name = readString(<span class="keyword">false</span>);</span><br><span class="line">    Enum&lt;?&gt; result = <span class="keyword">null</span>;</span><br><span class="line">    Class&lt;?&gt; cl = desc.forClass();</span><br><span class="line">    <span class="keyword">if</span> (cl != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">            <span class="comment">//获取枚举实例</span></span><br><span class="line">            Enum&lt;?&gt; en = Enum.valueOf((Class)cl, name);</span><br><span class="line">            result = en;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalArgumentException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (IOException) <span class="keyword">new</span> InvalidObjectException(</span><br><span class="line">                <span class="string">"enum constant "</span> + name + <span class="string">" does not exist in "</span> +</span><br><span class="line">                cl).initCause(ex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!unshared) &#123;</span><br><span class="line">            handles.setObject(enumHandle, result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    handles.finish(enumHandle);</span><br><span class="line">    passHandle = enumHandle;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>与readOrdinaryObject不同的是，Object对象通过newInstance实例化新的对象，而枚举对象通过Enum.valueOf获取的还是枚举对象自身，readEnum不会继续后面的resolveMethod判断，直接返回当前枚举实例。因此，枚举对象的实例，即使通过深拷贝，也始终是它自身。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1、普通的单例可以通过反射、深拷贝破坏</p>
+<p>2、普通的单例防御单例破坏，需在构造器中加校验，在对象中加以下方法，返回当前实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、枚举单例无法被反射和深拷贝破坏</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/单例/" rel="tag"># 单例</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/05/常用设计模式-委派模式/" rel="next" title="常用设计模式-委派模式">
+                <i class="fa fa-chevron-left"></i> 常用设计模式-委派模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/07/常用设计模式-过程不同结果相似的策略模式/" rel="prev" title="常用设计模式-过程不同结果相似的策略模式">
+                常用设计模式-过程不同结果相似的策略模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阿吉">
+            
+              <p class="site-author-name" itemprop="name">阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#反射破坏"><span class="nav-number">1.</span> <span class="nav-text">反射破坏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防御反射破坏"><span class="nav-number">2.</span> <span class="nav-text">防御反射破坏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象拷贝破坏"><span class="nav-number">3.</span> <span class="nav-text">对象拷贝破坏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防御拷贝破坏"><span class="nav-number">4.</span> <span class="nav-text">防御拷贝破坏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#无法破坏的单例"><span class="nav-number">5.</span> <span class="nav-text">无法破坏的单例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pHkCuEfhtMEwV8StKysroVAX-gzGzoHsz", "hxzd7uwHA3dPhriiJsk3gl9K");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

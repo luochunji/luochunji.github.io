@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JVM系列博文，是拜读周志明老师的《深入理解Java虚拟机——JVM高级特性与最佳实践》并结合Oracle官网《Java Virtual Machine Specification》和一些网络博客后，以及自己的理解，作为读书笔记性质记录。">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM之入门">
+<meta property="og:url" content="http://yoursite.com/2018/04/06/JVM之入门/index.html">
+<meta property="og:site_name" content="阿吉-Share">
+<meta property="og:description" content="JVM系列博文，是拜读周志明老师的《深入理解Java虚拟机——JVM高级特性与最佳实践》并结合Oracle官网《Java Virtual Machine Specification》和一些网络博客后，以及自己的理解，作为读书笔记性质记录。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/jvm类型.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/client和server差异.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/64bit-server-client.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/jvm版本启动类型.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/client报错.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/java-x.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/三种模式的性能比较.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/运行时数据区.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/Stack%20Frame.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/Heap模型.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/TLAB.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/Mark%20Word.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/句柄访问.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/06/JVM之入门/直接指针访问.png">
+<meta property="og:updated_time" content="2019-06-23T14:08:54.809Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM之入门">
+<meta name="twitter:description" content="JVM系列博文，是拜读周志明老师的《深入理解Java虚拟机——JVM高级特性与最佳实践》并结合Oracle官网《Java Virtual Machine Specification》和一些网络博客后，以及自己的理解，作为读书笔记性质记录。">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/06/JVM之入门/jvm类型.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"关键字","hits_empty":"无结果: ${query}","hits_stats":"${hits} 查询耗时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/06/JVM之入门/">
+
+
+
+
+
+  <title>JVM之入门 | 阿吉-Share</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉-Share</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/06/JVM之入门/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM之入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-06T22:03:14+08:00">
+                2018-04-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/06/JVM之入门/" class="leancloud_visitors" data-flag-title="JVM之入门">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>JVM系列博文，是拜读周志明老师的《<em>深入理解Java虚拟机——JVM高级特性与最佳实践</em>》并结合Oracle官网《<a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html" target="_blank" rel="noopener">Java Virtual Machine Specification</a>》和一些网络博客后，以及自己的理解，作为读书笔记性质记录。</p>
+<a id="more"></a>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>JVM（<strong><em>Java Virtual Machine</em></strong>）是Java平台的基础，它基于硬件和操作系统之上，能运行Java字节码的虚拟机。JVM拥有完善的架构体系，如寄存器、堆栈和计数器，还有自己的指令系统，它屏蔽了不同操作系统之间的差异性，使Java程序能够跨平台运行，实现Write Once,Run Anywhere。比较流行的JVM实现为sun公司开发的Hotspot（现已经被Oracle收购）、Oracle的JRockit和IBM的J9。本文和后续文章都基于JDK1.8的Hotspot虚拟机。</p>
+<p><img src="jvm类型.png" alt=""></p>
+<p>这是查看JDK版本，或者验证Java环境变量是否生效的常用命令，一直以来，我只关心版本号，也只停留在第一行输出的内容上。随着对java的深入，我开始关注第三行输出的内容：JVM类型和模式。</p>
+<p><em>Java HotSpot</em> 是虚拟机的名称</p>
+<p><em>Client</em> 是虚拟机的类型，与之对应的是Server类型</p>
+<p><em>build 25.65-b01</em> 是版本号</p>
+<p><em>mixed mode</em> 是虚拟机的工作模式</p>
+<h1 id="JVM类型"><a href="#JVM类型" class="headerlink" title="JVM类型"></a>JVM类型</h1><h2 id="Client和Server"><a href="#Client和Server" class="headerlink" title="Client和Server"></a>Client和Server</h2><p>为什么虚拟机有Client和Server之分？先来看看<a href="https://www.oracle.com/technetwork/java/hotspotfaq-138619.html#compiler_types" target="_blank" rel="noopener">官方说明</a></p>
+<blockquote>
+<p><strong>What’s the difference between the -client and -server systems?</strong></p>
+<p>These two systems are different binaries. They are essentially two different compilers (JITs)interfacing to the same runtime system. The client system is optimal for applications which need fast startup times or small footprints, the server system is optimal for applications where the overall performance is most important. In general the client system is better suited for interactive applications such as GUIs. Some of the other differences include the compilation policy,heap defaults, and inlining policy.</p>
+</blockquote>
+<p>Server JVM和Client JVM分别使用不同的编译器，Client（也叫C1编译器）适用于需要快速启动且内存占用较小的应用，比如GUI等交互式应用，而Server（也叫C2编译器）启动慢，启动后性能更强，适合整体执行效率高的应用比如后台程序，除此之外，编译策略、默认堆大小和内部的策略也存在差异。根据《<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/parallel.html#sthref30" target="_blank" rel="noopener"><strong>Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide</strong></a>》，看看默认时和最大时堆的大小在两者间的区别</p>
+<blockquote>
+<h3 id="Default-Heap-Size"><a href="#Default-Heap-Size" class="headerlink" title="Default Heap Size"></a>Default Heap Size</h3><p>Unless the initial and maximum heap sizes are specified on the command line, they are calculated based on the amount of memory on the machine.</p>
+<h4 id="Client-JVM-Default-Initial-and-Maximum-Heap-Sizes"><a href="#Client-JVM-Default-Initial-and-Maximum-Heap-Sizes" class="headerlink" title="Client JVM Default Initial and Maximum Heap Sizes"></a>Client JVM Default Initial and Maximum Heap Sizes</h4><p>The default maximum heap size is half of the physical memory up to a physical memory size of 192 megabytes (MB) and otherwise one fourth of the physical memory up to a physical memory size of 1 gigabyte (GB).</p>
+<p>For example, if your computer has 128 MB of physical memory, then the maximum heap size is 64 MB, and greater than or equal to 1 GB of physical memory results in a maximum heap size of 256 MB.</p>
+<p>The maximum heap size is not actually used by the JVM unless your program creates enough objects to require it. A much smaller amount, called the <em>initial heap size</em>, is allocated during JVM initialization. This amount is at least 8 MB and otherwise 1/64th of physical memory up to a physical memory size of 1 GB.</p>
+<p>The maximum amount of space allocated to the young generation is one third of the total heap size.</p>
+<h4 id="Server-JVM-Default-Initial-and-Maximum-Heap-Sizes"><a href="#Server-JVM-Default-Initial-and-Maximum-Heap-Sizes" class="headerlink" title="Server JVM Default Initial and Maximum Heap Sizes"></a>Server JVM Default Initial and Maximum Heap Sizes</h4><p>The default initial and maximum heap sizes work similarly on the server JVM as it does on the client JVM, except that the default values can go higher. On 32-bit JVMs, the default maximum heap size can be up to 1 GB if there is 4 GB or more of physical memory. On 64-bit JVMs, the default maximum heap size can be up to 32 GB if there is 128 GB or more of physical memory. You can always set a higher or lower initial and maximum heap by specifying those values directly; see the next section.</p>
+</blockquote>
+<p>Client JVM在物理内存不超过192MB时，默认堆内存大小为物理内存的一半（物理内存=128MB时，堆内存大小为64MB），当物理内存大于1GB时，堆内存大小最大不超过256MB。当然，JVM初始化时并不会根据物理内存直接分配最大堆内存，而是先分配一个初始化值，至少8M或者物理内存的1/64（物理内存超过1GB时），此外，新生代的最大内存占堆大小的1/3.</p>
+<p>Server JVM的堆内存默认大小比Client更高，在32位JVM上，如果物理内存&gt;=4GB，则默认的最大堆内存可达1GB。在64位JVM上，如果物理内存达到128G，默认堆内存大小最大为32GB，这些默认值和最大值都可以通过启动参数来指定。</p>
+<p>除了默认堆内存大小的区别外，Server JVM会对编译后的代码进行优化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">100000000</span>; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        System.out.println(end - start);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>循环1亿次，分别在Server和Client模式下执行（32位JDK）。</p>
+<p><img src="client和server差异.png" alt=""></p>
+<p>执行结果来看，Server的执行耗时明显少于Client，相差几倍。以上代码和命令是运行在32位JVM上，如果在64位JVM上运行呢？</p>
+<p><img src="64bit-server-client.png" alt=""></p>
+<p>Server和Client的执行耗时并没有明显的差别，究其原因，java命令在64位虚拟机上已经忽略了-client参数且不提供Client类型的jvm，也就是说无法通过该命令以client jvm运行字节码（<a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html#CBBIJCHG" target="_blank" rel="noopener">官方文档</a>）</p>
+<blockquote>
+<p><strong>Standard Options</strong></p>
+<p><strong>-client</strong></p>
+<p>Selects the Java HotSpot Client VM. A 64-bit capable JDK currently ignores this option and instead uses the Java Hotspot Server VM.</p>
+<p>For default Java VM selection, see the Server-Class Machine Detection page at<br><code>http://docs.oracle.com/javase/7/docs/technotes/guides/vm/server-class.html</code></p>
+<p><strong>-server</strong></p>
+<p>Selects the Java HotSpot Server VM. On a 64-bit capable JDK, only the Java Hotspot Server VM is supported so the <code>-`</code>server` option is implicit.</p>
+<p>For default a Java VM selection, see the Server-Class Machine Detection page at<br><code>http://docs.oracle.com/javase/7/docs/technotes/guides/vm/server-class.html</code></p>
+</blockquote>
+<h2 id="类型切换"><a href="#类型切换" class="headerlink" title="类型切换"></a>类型切换</h2><p>JVM是如何决定以哪种类型启动的呢？以下内容来自官方文档：<a href="https://docs.oracle.com/javase/6/docs/technotes/guides/vm/server-class.html" target="_blank" rel="noopener"><strong><em>Server-Class Machine Detection</em></strong></a></p>
+<blockquote>
+<h2 id="Server-Class-Machine-Detection"><a href="#Server-Class-Machine-Detection" class="headerlink" title="Server-Class Machine Detection"></a>Server-Class Machine Detection</h2><p>Starting with J2SE 5.0, when an application starts up, the launcher can attempt to detect whether the application is running on a “server-class” machine and, if so, use the Java HotSpot Server Virtual Machine (<em>server VM</em>) instead of the Java HotSpot Client Virtual Machine (<em>client VM</em>). The aim is to improve performance even if no one configures the VM to reflect the application it’s running. In general, the server VM starts up more slowly than the client VM, but over time runs more quickly.</p>
+<blockquote>
+<hr>
+<p>Note:For Java SE 6, the definition of a server-class machine is one with at least 2 CPUs and at least 2GB of physical memory.</p>
+<hr>
+</blockquote>
+<p>In Java SE 6, server-class detection occurs if neither <code>-server</code> nor <code>-client</code> is specified when launching the application on an i586 or Sparc 32-bit machine running Solaris or Linux. As the following table shows, the i586 Microsoft Windows platform uses the client VM by default. The remaining Sun-supported platforms use only the server VM.</p>
+</blockquote>
+<p><img src="jvm版本启动类型.png" alt=""></p>
+<p>​                                                 （各平台的默认JVM类型，—表示不提供该类型的jvm）</p>
+<p>从Jave SE 5开始，当一个应用启动的时候，加载器会尝试去检测应用是否运行在 “server-class” 的机器上，如果是，则使用Java HotSpot Server Virtual Machine (server VM)而不是 Java HotSpot Client Virtual Machine (client VM)。这样做的目的是提高执行效率，即使没有为应用显式配置VM。特别强调：从Java SE 6开始， <em>server-class</em>机器的定义是至少有2个CPU和至少2GB的物理内存。</p>
+<p>有两种方式可以切换jvm类型，第一种是上面提到过的命令（<strong><em>command-line options</em></strong>），第二种就要修改jvm.cfg配置文件。</p>
+<p>32位JDK的配置文件目录：%JAVA_HOME%\jre\lib\i386\jvm.cfg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># List of JVMs that can be used as an option to java, javac, etc.</span><br><span class="line"># Order is important -- first in this list is the default JVM.</span><br><span class="line"># NOTE that this both this file and its format are UNSUPPORTED and</span><br><span class="line"># WILL GO AWAY in a future release.</span><br><span class="line">#</span><br><span class="line"># You may also select a JVM in an arbitrary location with the</span><br><span class="line"># &quot;-XXaltjvm=&lt;jvm_dir&gt;&quot; option, but that too is unsupported</span><br><span class="line"># and may not be available in a future release.</span><br><span class="line">#</span><br><span class="line">-client KNOWN</span><br><span class="line">-server KNOWN</span><br></pre></td></tr></table></figure>
+<p>64位JDK下的配置文件目录：%JAVA_HOME%\jre\lib\amd64\jvm.cfg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># List of JVMs that can be used as an option to java, javac, etc.</span><br><span class="line"># Order is important -- first in this list is the default JVM.</span><br><span class="line"># NOTE that this both this file and its format are UNSUPPORTED and</span><br><span class="line"># WILL GO AWAY in a future release.</span><br><span class="line">#</span><br><span class="line"># You may also select a JVM in an arbitrary location with the</span><br><span class="line"># &quot;-XXaltjvm=&lt;jvm_dir&gt;&quot; option, but that too is unsupported</span><br><span class="line"># and may not be available in a future release.</span><br><span class="line">#</span><br><span class="line">-server KNOWN</span><br><span class="line">-client IGNORE</span><br></pre></td></tr></table></figure>
+<p>32位JDK只要调整配置顺序即可切换，64位JDK默认不提供client模式，即使切换了，也会提示错误</p>
+<p><img src="client报错.png" alt=""></p>
+<h1 id="JVM工作模式"><a href="#JVM工作模式" class="headerlink" title="JVM工作模式"></a>JVM工作模式</h1><p>命令行输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -X</span><br></pre></td></tr></table></figure>
+<p>看到以下结果</p>
+<p><img src="java-x.png" alt=""></p>
+<p>这是其中两种JVM的工作模式，除此之外还有-Xcomp模式，先看<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html" target="_blank" rel="noopener">官方</a>如何解释这三种模式</p>
+<blockquote>
+<p><strong>-Xcomp</strong></p>
+<p>Forces compilation of methods on first invocation. By default, the Client VM (<code>-client</code>) performs 1,000 interpreted method invocations and the Server VM (<code>-server</code>) performs 10,000 interpreted method invocations to gather information for efficient compilation. Specifying the <code>-Xcomp</code> option disables interpreted method invocations to increase compilation performance at the expense of efficiency.</p>
+<p>You can also change the number of interpreted method invocations before compilation using the <code>-XX:CompileThreshold</code> option.</p>
+<p><strong>-Xint</strong></p>
+<p>Runs the application in interpreted-only mode. Compilation to native code is disabled, and all bytecode is executed by the interpreter. The performance benefits offered by the just in time (JIT) compiler are not present in this mode.</p>
+<p><strong>-Xmixed</strong></p>
+<p>Executes all bytecode by the interpreter except for hot methods, which are compiled to native code.</p>
+</blockquote>
+<p><strong>-Xint</strong>：解释模式（<strong><em>interpreted mode</em></strong>），强制JVM以解释方式执行字节码，禁用编译器。</p>
+<p><strong>-Xcomp</strong>：编译模式（<strong><em>compiled mode</em></strong>），强制JVM在第一次使用时将所有字节码编译成本地代码，性能高于解释模式。</p>
+<p><strong>-Xmixed</strong>：混合模式（<strong><em>mixed mode</em></strong>），它同时使用编译模式和解释模式，JVM会对字节码进行分析，将频繁调用的部分编译成本地代码，以提高执行效率；很少调用甚至几乎没有调用的方法以解释模式执行，减少编译和优化的成本。</p>
+<p>早期的JVM是通过解释器执行代码，当它发现某些方法或者代码块运行频繁时，就会把这些代码标记为“热点代码（Hot Spot Code）”（HotSpot名称也是由此而来）。后来为了提高热点代码的执行效率，在运行时，虚拟机会把这些代码编译成本地平台相关的机器码进行优化，负责这个编译工作的编译器为即时编译器，即<strong>JIT</strong>（<strong><em>Just In Time Complier</em></strong>）编译器。</p>
+<p>还是以1亿次循环为例，比较三种模式的运行效率。</p>
+<p><img src="三种模式的性能比较.png" alt=""></p>
+<p>-Xint效率最差，-Xcomp和-Xmixed几乎没有差别。</p>
+<h1 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h1><p><img src="运行时数据区.png" alt=""></p>
+<p>JVM在执行Java程序的过程中把它所管理的内存划分为若干个不同的数据区域，如上图。</p>
+<h2 id="程序计数器（Program-Counter-Register）"><a href="#程序计数器（Program-Counter-Register）" class="headerlink" title="程序计数器（Program Counter Register）"></a>程序计数器（<em>Program Counter Register</em>）</h2><p>程序计数器时一块较小的内存空间，可以看作是当前线程所执行字节码的行号指示器。在JVM概念模型里，字节码指示器工作时就是通过改变这个计数器值来选取一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都要依赖计数器完成。</p>
+<p>JVM的多线程是通过线程切换并分配处理器时间的方式来实现，任何时刻一个处理器都只会执行一条线程中的指令。因此，为了线程恢复后能恢复到正确的执行位置，每条线程都需要有独立的计数器，线程间互不影响，独立存储，这类内存称为“线程私有”的内存。</p>
+<p>线程执行的是Java方法，计数器记录的是JVM的字节码指令地址；如果执行的是Native方法，计数器值为空。此内存区域是唯一一个在JVM规范中没有定义OutOfMemoryError情况的区域。</p>
+<h2 id="虚拟机栈（Java-Virtual-Machine-Stacks）"><a href="#虚拟机栈（Java-Virtual-Machine-Stacks）" class="headerlink" title="虚拟机栈（Java Virtual Machine Stacks）"></a>虚拟机栈（<em>Java Virtual Machine Stacks</em>）</h2><p>虚拟机栈也是线程私有的，其生命周期与线程相同，线程结束内存释放，因此虚拟机栈并不存在垃圾回收的问题。虚拟机栈描述的是Java方法执行的内存模型：每个方法执行时都会创建一个栈帧（Stack Frame）用于存储局部变量表、操作数栈、动态链接、方法出口等信息，方法的调用其实就是出栈和入栈的过程。</p>
+<p>虚拟机栈存储哪些数据？<a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6" target="_blank" rel="noopener">原文描述</a></p>
+<h3 id="局部变量（Local-Variables）"><a href="#局部变量（Local-Variables）" class="headerlink" title="局部变量（Local Variables）"></a>局部变量（<strong><em>Local Variables</em></strong>）</h3><p>编译时能确定的数据；</p>
+<p>8种基本数据类型、对象的引用、实例方法和方法返回地址（<em>returnAddress</em>）；</p>
+<p>方法入参、出参和临时变量；</p>
+<h3 id="栈操作（Operand-Stacks）"><a href="#栈操作（Operand-Stacks）" class="headerlink" title="栈操作（Operand Stacks）"></a>栈操作（<strong><em>Operand Stacks</em></strong>）</h3><p>记录入栈、出栈操作；</p>
+<p>以下代码为例描述出入栈过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    methodA();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">methodA</span><span class="params">()</span></span>&#123;</span><br><span class="line">    methodB();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">methodB</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="Stack Frame.png" alt=""></p>
+<p>虚拟机栈可能出现的两种异常：</p>
+<ol>
+<li>如果线程请求的栈深度大于允许的深度，会抛出StackOverflowError；</li>
+<li>如果虚拟机栈扩展时内存不足，就会抛出OutOfMemoryError。</li>
+</ol>
+<h2 id="本地方法栈（Native-Method-Stack）"><a href="#本地方法栈（Native-Method-Stack）" class="headerlink" title="本地方法栈（Native Method Stack）"></a>本地方法栈（<em>Native Method Stack</em>）</h2><p>与虚拟机栈相似，只不过虚拟机栈执行的是Java方法，本地方法栈执行的是native方法，也可能抛出StackOverflowError、OutOfMemoryError。由于HotSpot虚拟机中并不区分虚拟机栈和本地方法栈，因此<strong>-Xoss</strong>参数（设置本地方法栈大小）虽然存在，但实际是无效的，栈容量只能由<strong>-Xss</strong>参数设置，以下是栈溢出的示例代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * -Xss128k</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StackOF</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> stackLength = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stackLeack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        stackLength++;</span><br><span class="line">        stackLeack();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StackOF oom = <span class="keyword">new</span> StackOF();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            oom.stackLeack();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"stack length:"</span> + oom.stackLength);</span><br><span class="line">            <span class="keyword">throw</span> e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stack length:2103</span><br><span class="line">Exception in thread &quot;main&quot; java.lang.StackOverflowError</span><br><span class="line">	at com.cjluo.StackOF.stackLeack(StackOF.java:11)</span><br><span class="line">	at com.cjluo.StackOF.stackLeack(StackOF.java:12)</span><br><span class="line">	at com.cjluo.StackOF.stackLeack(StackOF.java:12)</span><br><span class="line">	……省略</span><br></pre></td></tr></table></figure>
+<p>以上结果说明栈深度超过JVM允许的最大深度，抛出StackOverflowError，那么要如何抛出OutOfMemoryError？可以通过不断创建新线程，把内存耗尽，但是这种方式产生的内存溢出与栈空间是否足够大并没有任何关系。</p>
+<h2 id="堆（Heap）"><a href="#堆（Heap）" class="headerlink" title="堆（Heap）"></a>堆（<em>Heap</em>）</h2><p>堆是所有线程共享的区域，它在启动时创建，此区域的唯一目的就是存放对象的实例，几乎所有的对象实例都在这个区域分配内存。为什么说“几乎”？因为随着JIT编译器的发展和逃逸技术分析成熟，栈上分配、标量替换优化技术会产生一些微妙的变化，所有对象都分配在堆上也就不完全绝对了。一个JVM实例只能存在一个堆内存，它的大小可以调节，并且在规定的范围内可以自动伸缩。</p>
+<p>堆上对象分配的内存，会被回收，负责这个功能的叫做垃圾回收器（<strong><em>garbage collector</em></strong>），堆是垃圾回收器的主要区域，因此也叫GC堆（<strong><em>Garbage Collector Heap</em></strong>），从GC回收的角度看，堆在逻辑上可以划分为以下区域：新生代、老年代和永久区（JDK1.8开始已经没有永久区，取而代之的是MateSpace）。再具体一点，新生代又划分为Eden区、Form Survivor区、To Survivor区。</p>
+<p><img src="Heap模型.png" alt=""></p>
+<p>从内存分配的角度看，线程共享的Java堆可以划分出多个线程私有的分配缓冲区（<strong>Thread Local Allocation Buffer，TLAB</strong>）</p>
+<p><img src="TLAB.png" alt=""></p>
+<p>因为堆的大小在一定范围内是可扩展的，如果堆中没有足够的内存可以分配，将抛出OutOfMemoryError异常。以下是代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeapOOM</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OOMObject</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> _1M = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List&lt;OOMObject&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            list.add(<span class="keyword">new</span> OOMObject());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[GC [PSYoungGen: 7909K-&gt;1016K(9216K)] 7909K-&gt;5294K(19456K), 0.0324974 secs] [Times: user=0.03 sys=0.02, real=0.03 secs] </span><br><span class="line">[GC-- [PSYoungGen: 9208K-&gt;9208K(9216K)] 13486K-&gt;19444K(19456K), 0.0283762 secs] [Times: user=0.09 sys=0.00, real=0.03 secs] </span><br><span class="line">[Full GC [PSYoungGen: 9208K-&gt;0K(9216K)] [ParOldGen: 10236K-&gt;10071K(10240K)] 19444K-&gt;10071K(19456K) [PSPermGen: 2121K-&gt;2120K(16384K)], 0.6551317 secs] [Times: user=0.41 sys=0.00, real=0.65 secs] </span><br><span class="line">[Full GC [PSYoungGen: 7821K-&gt;8132K(9216K)] [ParOldGen: 10071K-&gt;8209K(10240K)] 17893K-&gt;16342K(19456K) [PSPermGen: 2171K-&gt;2171K(16384K)], 0.2723715 secs] [Times: user=0.41 sys=0.00, real=0.27 secs] </span><br><span class="line">[Full GC [PSYoungGen: 8132K-&gt;8122K(9216K)] [ParOldGen: 8209K-&gt;8204K(10240K)] 16342K-&gt;16327K(19456K) [PSPermGen: 2171K-&gt;2171K(16384K)], 0.2054207 secs] [Times: user=0.27 sys=0.00, real=0.21 secs] </span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">	at java.util.Arrays.copyOf(Arrays.java:2245)</span><br><span class="line">	at java.util.Arrays.copyOf(Arrays.java:2219)</span><br><span class="line">	at java.util.ArrayList.grow(ArrayList.java:242)</span><br><span class="line">	at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:216)</span><br><span class="line">	at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:208)</span><br><span class="line">	at java.util.ArrayList.add(ArrayList.java:440)</span><br><span class="line">	at com.cjluo.HeapOOM.main(HeapOOM.java:19)</span><br></pre></td></tr></table></figure>
+<h2 id="方法区（Method-Area）"><a href="#方法区（Method-Area）" class="headerlink" title="方法区（Method Area）"></a>方法区（<em>Method Area</em>）</h2><p>方法区与堆一样，都是各线程共享的内存区域，它存储JVM加载的元数据，例如Class、Interface、常量、静态变量、方法和类的构造函数等。即该区域存储的包含一些JVM运行的必须信息，尽管JVM虚拟机规定方法区在逻辑上属于堆的一部分，但实际上JVM启动后装载的数据不会被GC回收，直到JVM退出或关闭才会回收，他也有个别名叫做非堆（<strong><em>No-Heap</em></strong>）。如果出现java.lang.OutOfMemoryError:PermGen space，说明是JVM的永久代Perm内存设置不够，常出现于以下几种情况：</p>
+<ol>
+<li>应用加载很多第三方jar；</li>
+<li>Tomcat部署了太多的应用；</li>
+<li>大量通过反射生成的类不断被加载导致内存不足；</li>
+<li>大量的JSP动态编译。</li>
+</ol>
+<p>在HotSpot虚拟机上，方法区又称作永久代，GC分代收集扩展至方法区，因此GC可以和堆一样管理方法区的内存，但是对于其他虚拟机的实现，是不存在永久代的概念（这也符合虚拟机规范，因为并没有具体定义如何实现方法区，也没有要求一定要实现内存回收）。因此JDK7之后的HotSpot中，原本在方法区的字符串常量池被移除，直到JDK8的发布，方法区的实现用MateSpace取代了永久代。以下是几个JDK版本方法区的区别。</p>
+<p>JDK6及之前，方法区以永久代实现，常量池在方法区中；</p>
+<p>JDK7，方法区以永久代实现，但常量池已经移到堆中；</p>
+<p>JDK8及之后，方法区以MateSpace实现，常量池在MateSpace中</p>
+<h3 id="运行时常量池（Run-Time-Constant-Pool）"><a href="#运行时常量池（Run-Time-Constant-Pool）" class="headerlink" title="运行时常量池（Run-Time Constant Pool）"></a>运行时常量池（<em>Run-Time Constant Pool</em>）</h3><p>运行时常量池属于方法区的一部分，Class文件除了有类的版本、字段、方法、接口等描述信息外，还有一项常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法区的运行时常量池中存储。</p>
+<p>Java并没有规定常量必须在编译期产生，运行期间也可能将新的常量放入池中，例如String的intern()方法。运行时常量池也受方法区内存的限制，也有可能抛出OutOfMemoryError。</p>
+<h1 id="HotSpot中的对象"><a href="#HotSpot中的对象" class="headerlink" title="HotSpot中的对象"></a>HotSpot中的对象</h1><h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><p>有四种方式创建对象：</p>
+<ol>
+<li>new关键字，创建对象最常用的方式；</li>
+<li>newInstance()方法，两个地方可以调用newInstance()方法，分别是Class类和Constructor类；</li>
+<li>clone，常说的浅拷贝方式；</li>
+<li>反序列化，常说的深拷贝方式。</li>
+</ol>
+<p>以new关键字创建对象为例，对象是如何被创建的。</p>
+<h3 id="类加载检查"><a href="#类加载检查" class="headerlink" title="类加载检查"></a>类加载检查</h3><p>jvm在执行一条new指令时，首先去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过，如果没有，就必须先执行类加载过程（后续的文章详述）。</p>
+<h3 id="分配内存"><a href="#分配内存" class="headerlink" title="分配内存"></a>分配内存</h3><p>类加载检查通过后，对象所需的内存大小可以确定（如何确定见内存布局）可以开始分配内存，分配内存即从堆中划分出一块大小确定的空间，此时又分为两种方式：</p>
+<ol>
+<li>堆内存空间绝对规整，已使用内存/空闲内存各占一边，中间以指针指示器作为分界，分配时将指针往空闲内存移动对象大小相等的距离，这种方式叫做<strong>指针碰撞</strong>（<strong><em>Bump The Pointer</em></strong>）；</li>
+<li>堆内存空间不规整，已使用内存和空先内存相互交错，分布不均，指针碰撞无法进行，jvm只能维护一个列表，记录哪些是空闲内存，在分配的时候将大小足够的空闲内存分配给对象实例，同时更新列表记录，这种方式叫做<strong>空闲列表</strong>（<strong><em>Free List</em></strong>）</li>
+</ol>
+<p>哪种方式分配内存取决于内存是否规整，内存是否规整又取决于采用哪种GC算法，带有压缩整理功能的GC回收算法，因此使用Serial、ParNew等带Compact过程的收集器时，分配内存采用<strong>指针碰撞</strong>的方式，而基于标记-清除算法的CMS收集器，通常采用<strong>空闲列表</strong>方式。</p>
+<p>除了可用空间大小外，还有一个需要考虑的问题就是线程安全，并发情况下，有可能出现对象A的内存尚未分配完成，对象B在原指针的位置也进行了内存分配，此问题该如何解决？</p>
+<ol>
+<li>对分配内存的动作进行同步，jvm会采用CAS加上失败重试的机制保证内存分配的原子性；</li>
+<li>按照线程将分配内存的动作在不同的空间之中进行，每个线程在堆中先划分一小块内存，即TLAB，哪个线程要分配内存，就在哪个线程的TLAB上进行分配，只有TLAB不足并且需要分配新的TLAB时，才需要同步锁定。是否使用TLAB，可以通过<strong>-XX:+/-UseTLAB</strong>参数来设置。</li>
+</ol>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>分配内存结束，JVM需要对已分配内存空间的实例进行初始化零值（不含对象头），如果分配时使用的是TLAB，则初始化的工作可以提前到TLAB分配时进行。这一步操作保证了对象的实例字段在Java代码中不需要赋初始值就可以直接使用，程序能访问到这些字段的数据类型对应的零值。</p>
+<h3 id="设置对象头"><a href="#设置对象头" class="headerlink" title="设置对象头"></a>设置对象头</h3><p>接着，JVM要对对象进行必要的设置，例如对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等。这些信息都存储在对象头（<strong><em>Object Header</em></strong>）之中。根据虚拟机当前的运行状态的不同，如是否启用偏向锁等，对象头有不同的设置方式，具体会在内存布局中详述。</p>
+<h3 id="执行init方法"><a href="#执行init方法" class="headerlink" title="执行init方法"></a>执行init方法</h3><p>以上工作都完成后，JVM的视角看来，已经创建了新的对象，但从Java程序的视角来看，对象必须执行init方法，将为零值的字段进行初始化。一般来说（由字节码中是否跟随invokespecial指令所决定），执行new指令之后会接着执行init方法，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完全产生出来。</p>
+<h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>HotSpot虚拟机中，对象在内存中存储的布局可以分为三块区域：对象头（<strong><em>Header</em></strong>）、实例数据（<strong><em>Instance Data</em></strong>）和对齐填充（<strong><em>Padding</em></strong>）。</p>
+<ul>
+<li><p><strong>Header</strong></p>
+<p>自身运行时的数据（<strong><em>Mark Word</em></strong>），32位/64位虚拟机对应的长度分别为32bit/64bit。</p>
+<p>​    哈希码（hashCode）</p>
+<p>​    GC分代年龄</p>
+<p>​    锁状态标志</p>
+<p>​    线程持有锁</p>
+<p>​    偏向线程ID</p>
+<p>​    偏向时间戳</p>
+<p>类型指针</p>
+<p>数组长度（只有数组对象才有）</p>
+</li>
+<li><p><strong>Instance Data</strong></p>
+<p>相同宽度的数据分配到一起（long/double）</p>
+</li>
+<li><p><strong>Padding</strong></p>
+<p>非必然存在，起着占位符的作用，JVM要求对象的大小必须是8字节的整数倍，当实例数据部分没有对齐时，就需要通过对齐填充来补全。</p>
+<p><img src="Mark Word.png" alt=""></p>
+</li>
+</ul>
+<h2 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h2><ul>
+<li><p>句柄访问</p>
+<p>reference中存储的是稳定的句柄地址，对象被移动时只会改变句柄中实例数据指针，不影响reference</p>
+<p><img src="句柄访问.png" alt=""></p>
+</li>
+<li><p>直接指针访问</p>
+<p>对比句柄访问，直接指针访问方式最大好处就是速度更快，它节省了一次指针定位的时间开销，由于对象的访问非常频繁，因此这类开销积少成多后也是一项非常大的耗时。HotSpot虚拟机采用的就是这种方式来访问对象，Java堆中会存放类元数据的地址，reference存储的就是对象的地址；</p>
+</li>
+</ul>
+<p><img src="直接指针访问.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/23/zookeeper客户端-java-api简单使用/" rel="next" title="zookeeper客户端-java api简单使用">
+                <i class="fa fa-chevron-left"></i> zookeeper客户端-java api简单使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/09/GC算法/" rel="prev" title="GC算法">
+                GC算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阿吉">
+            
+              <p class="site-author-name" itemprop="name">阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM类型"><span class="nav-number">2.</span> <span class="nav-text">JVM类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Client和Server"><span class="nav-number">2.1.</span> <span class="nav-text">Client和Server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Default-Heap-Size"><span class="nav-number">2.1.1.</span> <span class="nav-text">Default Heap Size</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Client-JVM-Default-Initial-and-Maximum-Heap-Sizes"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">Client JVM Default Initial and Maximum Heap Sizes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Server-JVM-Default-Initial-and-Maximum-Heap-Sizes"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">Server JVM Default Initial and Maximum Heap Sizes</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型切换"><span class="nav-number">2.2.</span> <span class="nav-text">类型切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Server-Class-Machine-Detection"><span class="nav-number">2.3.</span> <span class="nav-text">Server-Class Machine Detection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM工作模式"><span class="nav-number">3.</span> <span class="nav-text">JVM工作模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行时数据区"><span class="nav-number">4.</span> <span class="nav-text">运行时数据区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#程序计数器（Program-Counter-Register）"><span class="nav-number">4.1.</span> <span class="nav-text">程序计数器（Program Counter Register）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机栈（Java-Virtual-Machine-Stacks）"><span class="nav-number">4.2.</span> <span class="nav-text">虚拟机栈（Java Virtual Machine Stacks）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#局部变量（Local-Variables）"><span class="nav-number">4.2.1.</span> <span class="nav-text">局部变量（Local Variables）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈操作（Operand-Stacks）"><span class="nav-number">4.2.2.</span> <span class="nav-text">栈操作（Operand Stacks）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地方法栈（Native-Method-Stack）"><span class="nav-number">4.3.</span> <span class="nav-text">本地方法栈（Native Method Stack）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆（Heap）"><span class="nav-number">4.4.</span> <span class="nav-text">堆（Heap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法区（Method-Area）"><span class="nav-number">4.5.</span> <span class="nav-text">方法区（Method Area）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#运行时常量池（Run-Time-Constant-Pool）"><span class="nav-number">4.5.1.</span> <span class="nav-text">运行时常量池（Run-Time Constant Pool）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HotSpot中的对象"><span class="nav-number">5.</span> <span class="nav-text">HotSpot中的对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的创建"><span class="nav-number">5.1.</span> <span class="nav-text">对象的创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载检查"><span class="nav-number">5.1.1.</span> <span class="nav-text">类加载检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分配内存"><span class="nav-number">5.1.2.</span> <span class="nav-text">分配内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">5.1.3.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置对象头"><span class="nav-number">5.1.4.</span> <span class="nav-text">设置对象头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行init方法"><span class="nav-number">5.1.5.</span> <span class="nav-text">执行init方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的内存布局"><span class="nav-number">5.2.</span> <span class="nav-text">对象的内存布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的访问定位"><span class="nav-number">5.3.</span> <span class="nav-text">对象的访问定位</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pHkCuEfhtMEwV8StKysroVAX-gzGzoHsz", "hxzd7uwHA3dPhriiJsk3gl9K");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

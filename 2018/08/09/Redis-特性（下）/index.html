@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="redis,队列,管道,发布,订阅,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前篇基于redis的高级特性，了解如何使用redis的事务，设置数据的有效期和对列表、集合等的排序，本篇篇基于场景，了解redis的其他特性。">
+<meta name="keywords" content="redis,队列,管道,发布,订阅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-特性（下）">
+<meta property="og:url" content="http://yoursite.com/2018/08/09/Redis-特性（下）/index.html">
+<meta property="og:site_name" content="阿吉-Share">
+<meta property="og:description" content="前篇基于redis的高级特性，了解如何使用redis的事务，设置数据的有效期和对列表、集合等的排序，本篇篇基于场景，了解redis的其他特性。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180830155213415-164218843.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180830163249899-1636844358.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180830164256614-924623160.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831091013236-2069941930.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831104439799-2110436391.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831105359682-1078264319.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831105328368-2059866550.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831110636100-1713926103.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180831111902735-1613156990.png">
+<meta property="og:updated_time" content="2019-07-06T05:56:39.521Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis-特性（下）">
+<meta name="twitter:description" content="前篇基于redis的高级特性，了解如何使用redis的事务，设置数据的有效期和对列表、集合等的排序，本篇篇基于场景，了解redis的其他特性。">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/09/Redis-特性（下）/572667-20180830155213415-164218843.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"关键字","hits_empty":"无结果: ${query}","hits_stats":"${hits} 查询耗时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/09/Redis-特性（下）/">
+
+
+
+
+
+  <title>Redis-特性（下） | 阿吉-Share</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿吉-Share</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I'm not just a coder...</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/09/Redis-特性（下）/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阿吉">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿吉-Share">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis-特性（下）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-09T17:57:11+08:00">
+                2018-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/09/Redis-特性（下）/" class="leancloud_visitors" data-flag-title="Redis-特性（下）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　前篇基于redis的高级特性，了解如何使用redis的事务，设置数据的有效期和对列表、集合等的排序，本篇篇基于场景，了解redis的其他特性。</p>
+<a id="more"></a>
+<h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a><strong>队列</strong></h1><p>在系统中往往有许多需要处理的工作，有的工作对时效性要求高，需要立即返回结果，有的对时效性不高，容许一定时间的延迟，比如后台日志、邮件发送。这些时效性不高的功能，可以把他们作为一个任务放在队列里，再由专门的程序来处理。没错，这就是经典的<strong>生产者消费者模型</strong>。连接生产者和消费者的桥梁就是队列（queue），生产者负责将任务封装并放入队列中，消费者不断的从队列中获取任务并处理，熟悉的程序员应该很了解这个模型带来的好处：松耦合，易扩展。redis的列表类型可以很好的实现高性能的任务队列，结合<code>lpush</code>和<code>rpop</code>命令，很容易想到让生产者将任务<code>lpush</code>到某个列表key中，另一端消费者用<code>rpop</code>不断的从这个列表key取出任务，这个列表key就起到了队列的作用。</p>
+<p><img src="572667-20180830155213415-164218843.png" alt="img"></p>
+<p>熟悉Java队列的开发者应该清楚，队列分为阻塞队列和非阻塞队列，redis的队列没有阻塞与非阻塞之分，但是通过命令可以实现阻塞队列和非阻塞队列的功能，上文提到的简单生产者和消费者模型在redis的实现，如果队列中没有任务，返回nil。下一次再获取任务旧需要通过定时任务或者人工触发，如果不想通过这种方式，redis的<code>brpop</code>命令可以解决这个问题。在队列没有任务的情况下，<code>brpop</code>与<code>rpop</code>的唯一区别在于前者会阻塞住连接，直到有新的入队元素加入。</p>
+<p><img src="572667-20180830163249899-1636844358.png" alt="img"></p>
+<p>每次执行<code>brpop</code>命令，redis从右侧弹出当前的key和任务，如果队列中没有元素，进入阻塞状态。下表比较了列表作为队列时，相关的命令。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+<th>参数说明</th>
+<th>返回值</th>
+<th>是否阻塞</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lpush  key [value...]</code></td>
+<td>将元素从表头插入</td>
+<td>value支持多个元素</td>
+<td>列表长度</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rpush  key [value...]</code></td>
+<td>将元素从表尾插入</td>
+<td>value支持多个元素</td>
+<td>列表长度</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rpop  key</code></td>
+<td>从<strong>表尾</strong>弹出元素</td>
+<td></td>
+<td>弹出的元素值（如果是空列表，返回nil）</td>
+<td>X</td>
+</tr>
+<tr>
+<td><code>lpop  key</code></td>
+<td>从<strong>表头</strong>弹出元素</td>
+<td></td>
+<td>弹出的元素值（如果是空列表，返回nil）</td>
+<td>X</td>
+</tr>
+<tr>
+<td><code>blpop  [key...] timeout</code></td>
+<td>从多个列表的<strong>表头</strong>弹出元素</td>
+<td>key可以是多个列表，timeout为超时时间（单位秒），0表示永不超时</td>
+<td>返回两个值：第一个为列表的key，第二个为弹出的元素</td>
+<td>O</td>
+</tr>
+<tr>
+<td><code>brpop [key...] timeout</code></td>
+<td>从多个列表的<strong>表尾</strong>弹出元素</td>
+<td>key可以是多个列表，timeout为超时时间（单位秒），0表示永不超时</td>
+<td>返回两个值：第一个为列表的key，第二个为弹出的元素</td>
+<td>O</td>
+</tr>
+</tbody>
+</table>
+<p>以上的命令都需要一个插入命令和一个弹出命令组合才能将列表作为一个FIFO或LIFO队列使用。假如现在遇到了这样的一个场景，系统中有一些任务需要加急处理，而目前的队列前面有N个普通任务在排队处理，显然目前的设计无法满足场景需求。这时候<code>brpop</code>又可以派上用场了，<code>brpop</code>与<code>rpop</code>的区别除了阻塞客户端连接外，它还可以接收多个列表key，并且根据列表从左至右的顺序取key中的元素，如果所有的key都没有元素，进入阻塞状态。因此上述场景可以通过两个列表来解决，queue1是普通的任务队列，queue2是加急任务队列，<code>brpop</code>会优先从左侧开始弹出列表的任务。<code>blpop</code>与<code>brpop</code>类似，只是一个从表头弹出，一个从表尾弹出，不再赘述。</p>
+<p><img src="572667-20180830164256614-924623160.png" alt="img"></p>
+<h1 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h1><p>redis的客户端和服务端在生产、测试环境中一般是不会在同一台机器上，因此客户端和服务端的通讯都要经过网络传输，发送和返回都会产生耗时，网络性能不同产生的耗时也不同。前面提到的redis事务，在开始执行事务时，客户端将接收的命令放入列表中，只有在执行<code>exec</code>命令时，将列表的命令一次性发给服务端，服务端将执行结果一次性返回，除了保证原子性外，还节约了多次的网络开销。那么在非事务下，是否也有类似的方式减少网络开销？redis的底层通信协议对管道的支持解决了这个问题。首先看个例子，分别对两个key自增到10万，分别采用管道模型和非管道模型，比较两者的执行时间（以Java的jedis客户端为例）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PipelineTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> max = <span class="number">100000</span>;</span><br><span class="line">    jedis = jPool.getResource();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        jedis.del(<span class="keyword">new</span> String[]&#123;<span class="string">"key1"</span>, <span class="string">"key2"</span>&#125;);</span><br><span class="line">        <span class="comment">//管道</span></span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        Pipeline pipeline = jedis.pipelined();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; max; j++) &#123;</span><br><span class="line">            pipeline.incr(<span class="string">"key1"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        pipeline.sync();</span><br><span class="line">        <span class="keyword">long</span> t1 = System.currentTimeMillis() - start;</span><br><span class="line">        <span class="comment">//非管道</span></span><br><span class="line">        start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; max; j++) &#123;</span><br><span class="line">            jedis.incr(<span class="string">"key2"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> t2 = System.currentTimeMillis() - start;</span><br><span class="line">        System.out.printf(<span class="string">"管道耗时:%s ms,非管道耗时:%s ms \n"</span>, String.valueOf(t1), String.valueOf(t2));</span><br><span class="line">    &#125;</span><br><span class="line">    jedis.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下是在redis服务器上执行10次的结果：</p>
+<p><img src="572667-20180831091013236-2069941930.png" alt="img"></p>
+<p>以上测试机器的配置为I5二代，8G内存，10次执行结果的平均值来看，非管道模型的耗时大约是管道模型耗时的50~60倍之间，这个结果应该很好理解，10万次自增命令，非管道模型下需要10万组的传输层通信，往返共20万次，而管道模型只需1组传输，2次往返，极大减少了网络开销。</p>
+<h1 id="发布与订阅"><a href="#发布与订阅" class="headerlink" title="发布与订阅"></a>发布与订阅</h1><p>redis的另一个特点是提供发布和订阅模式，它的特点是订阅者负责订阅频道，发送者负责向频道发送二进制字符串消息，频道的所有订阅者们都会收到消息，以下是发布和订阅的相关命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+<th>参数说明</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>publish channel message</code></td>
+<td>将消息message发布到频道channel</td>
+<td>channel 频道，message 消息</td>
+<td>返回收到message的订阅者数量</td>
+</tr>
+<tr>
+<td><code>subscribe channel...</code></td>
+<td>订阅一个或多个频道的消息</td>
+<td>channel 频道，支持多个</td>
+<td>执行订阅命令后，进入订阅状态，客户端只能使用发布/订阅相关的4个命令。返回值可能收到3种类型的回复</td>
+</tr>
+<tr>
+<td><code>psubscribe pattern...</code></td>
+<td>按给定的pattern规则订阅频道</td>
+<td>pattern 规则通配符，支持多个</td>
+<td>同<code>subscribe</code>命令</td>
+</tr>
+<tr>
+<td><code>unsubscribe channel...</code></td>
+<td>退订通过<code>subscribe</code>订阅的频道</td>
+<td>channel 频道，支持多个</td>
+<td>只能退订通过<code>subscribe</code>订阅的频道，不影响<code>psubscribe</code>订阅的频道，如果不带参数，则退订所有频道</td>
+</tr>
+<tr>
+<td><code>punsubscribe channel...</code></td>
+<td>退订通过<code>psubscribe</code>订阅的频道</td>
+<td>channel 频道，支持多个</td>
+<td>只能退订通过<code>psubscribe</code>订阅的频道，不影响<code>subscribe</code>订阅的频道，如果不带参数，则退订所有频道</td>
+</tr>
+</tbody>
+</table>
+<p><code>subscribe</code>命令可以订阅任何频道，在执行命令后，客户端进入订阅状态。</p>
+<p><img src="572667-20180831104439799-2110436391.png" alt="img"></p>
+<p>每订阅一个频道，将返回三条消息，订阅n个频道返回n组3条信息，每组的第一条消息是订阅类型<code>subscribe</code>或<code>psubscribe</code>，第二条消息是订阅的频道名称，第三条消息是当前客户端订阅的频道数量。</p>
+<p>发布者在订阅的频道发布一条消息，返回的数字表示当前频道的订阅者个数。</p>
+<p><img src="572667-20180831105359682-1078264319.png" alt="img"></p>
+<p><img src="572667-20180831105328368-2059866550.png" alt="img"></p>
+<p>这时频道的订阅者将收到发布者发布的信息，也是三条消息，第一条为message，表示类型为接收消息，第二条为发布消息的频道，第三条是接收的内容。</p>
+<p>如果订阅者退订频道，也将收到三条消息，第一条是退订方式<code>unsubscribe</code>或<code>punsubscribe</code>，第二条是退订的频道名称，第三条是当前客户端订阅的频道数。</p>
+<p><img src="572667-20180831110636100-1713926103.png" alt="img"></p>
+<p><code>psubscribe</code>命令订阅频道还能指定规则，规则支持glob的通配符，例如规则【channel.?*】可以匹配以【channel.】开头的所有频道，但是不包括【channel.】，此时向channel.开头的频道发布消息，该客户端都能收到信息。</p>
+<p><img src="572667-20180831111902735-1613156990.png" alt="img"></p>
+<p>此时收到4条消息，第一条表示通过psubscribe命令订阅频道，第二条表示频道的通配符，第三条表示实际发布消息的频道，第四条才是具体的消息内容。</p>
+<blockquote>
+<p><strong>注意:</strong></p>
+<ol>
+<li><code>psubscribe</code>命令可以重复订阅消息，如果客户端订阅了两次【channel.?*】，这时发布者向channel.1发布一条消息，发布者返回值是2而不是1，客户端也将收到两组消息。</li>
+<li>订阅频道的客户端只能接收订阅后发布者发布的消息，发布者在订阅者订阅频道前发布的消息，客户端是无法收到的</li>
+</ol>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+            <a href="/tags/队列/" rel="tag"># 队列</a>
+          
+            <a href="/tags/管道/" rel="tag"># 管道</a>
+          
+            <a href="/tags/发布/" rel="tag"># 发布</a>
+          
+            <a href="/tags/订阅/" rel="tag"># 订阅</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/08/Redis-特性（上）/" rel="next" title="Redis-特性（上）">
+                <i class="fa fa-chevron-left"></i> Redis-特性（上）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/13/Redis-性能优化/" rel="prev" title="Redis-性能优化">
+                Redis-性能优化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阿吉">
+            
+              <p class="site-author-name" itemprop="name">阿吉</p>
+              <p class="site-description motion-element" itemprop="description">keep moving forward</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#队列"><span class="nav-number">1.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#管道"><span class="nav-number">2.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发布与订阅"><span class="nav-number">3.</span> <span class="nav-text">发布与订阅</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿吉</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pHkCuEfhtMEwV8StKysroVAX-gzGzoHsz", "hxzd7uwHA3dPhriiJsk3gl9K");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
